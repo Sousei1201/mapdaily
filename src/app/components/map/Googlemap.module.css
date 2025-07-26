@@ -1,0 +1,44 @@
+.currentwarp{
+  position: absolute;
+  bottom: 90px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #d9cf8d;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+
+}
+
+.navIcon {
+  width: 24px;
+  height: 24px;
+  fill: #ffec47; 
+}
+
+.recordmenu {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #d9cf8d;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.plusIcon {
+  width: 24px;
+  height: 24px;
+  fill: #ffec47;
+}
