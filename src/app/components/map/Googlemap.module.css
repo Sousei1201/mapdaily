@@ -12,7 +12,7 @@
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-
+  z-index: 100;
 }
 
 .navIcon {
@@ -35,10 +35,239 @@
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  z-index: 100;
 }
 
 .plusIcon {
   width: 24px;
   height: 24px;
   fill: #ffec47;
+}
+
+
+
+
+
+
+/* 記録モーダル */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 236, 71, 0.7); /* #ffec47 with opacity */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: rgb(217, 205, 163);
+  top:-10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  position: relative;
+}
+
+/* 画像セクション */
+.imageSection {
+  margin-bottom: 20px;
+}
+
+.imageUploadLabel {
+  display: block;
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.selectedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* フィールドラベル */
+.fieldLabel {
+  display: block;
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+/* 住所セクション */
+.addressSection {
+  margin-bottom: 20px;
+}
+
+.addressDisplay {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-radius: 8px;
+  color: #333;
+  min-height: 20px;
+}
+
+/* 日時セクション */
+.datetimeSection {
+  margin-bottom: 20px;
+}
+
+.datetimeDisplay {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-radius: 8px;
+  color: #333;
+}
+
+/* コメントセクション */
+.commentSection {
+  margin-bottom: 20px;
+}
+
+.commentInput {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.commentInput:focus {
+  outline: 2px solid #ffffff;
+}
+
+/* 保存ボタン */
+.saveButton {
+  width: 100%;
+  padding: 15px;
+  background-color: #d9cf8d;
+  color: #82ae46;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.saveButton:hover {
+  background-color: #c7bc73;
+}
+
+/* キャンセルボタン */
+.cancelButton {
+  position:fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background-color: #ff4444;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancelButton:hover {
+  background-color: #ff2222;
+}
+
+/* 確認ダイアログ */
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.dialogContent {
+  background-color: #d9cf8d;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  min-width: 300px;
+}
+
+.dialogMessage {
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #333;
+}
+
+.dialogButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.dialogYes, .dialogNo {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+.dialogYes {
+  background-color: #c03939;
+  color: white;
+}
+
+.dialogYes:hover {
+  background-color: #ff2222;
+}
+
+.dialogNo {
+  background-color: #468fae;
+  color: white;
+}
+
+.dialogNo:hover {
+  background-color: #26b1ed;
 }
