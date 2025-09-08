@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log(email, password);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       throw error;

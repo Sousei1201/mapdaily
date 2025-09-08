@@ -33,8 +33,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       resetForm();
     } catch (error: any) {
       console.error('Authentication error:', error);
+       // デバッグ用：エラーの詳細を表示
+      // alert(`Error code: ${error.code}, Message: ${error.message}`);
       if (error.code === 'auth/user-not-found') {
         setError('ユーザーが見つかりません');
+      } else if (error.code === 'auth/invalid-credential') {
+        setError('メールアドレスまたはパスワードが間違っています');
       } else if (error.code === 'auth/wrong-password') {
         setError('パスワードが間違っています');
       } else if (error.code === 'auth/email-already-in-use') {

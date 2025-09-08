@@ -1,9 +1,10 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import styles from "./Googlemap.module.css";
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, Marker, InfoWindow } from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
 import RecordIcon from './plus-solid.svg';
+import { useRecords, TravelRecord } from '../../hooks/useRecords';
 
 export const MapContent = () => {
   const [center, setCenter] = useState({ lat: 35.656, lng: 139.737 });
@@ -11,10 +12,29 @@ export const MapContent = () => {
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState<string | null>(null);
   const [comment, setComment] = useState('');
+  const [records, setRecords] = useState<TravelRecord[]>([]);
+  const [selectedRecord, setSelectedRecord] = useState<TravelRecord | null>(null);
   const mapRef = useRef(null);
-  
+  const { loading: recordLoading, saveRecord, fetchUserRecords } = useRecords();
+
+  // 記録データを取得
+  useEffect(() => {
+    const loadRecords = async () => {
+      try {
+        const userRecords = await fetchUserRecords();
+        setRecords(userRecords);
+      } catch (error) {
+        console.error('記録の取得に失敗しました:', error);
+      }
+    };
+    
+    if (!isLoading) {
+      loadRecords();
+    }
+  }, [isLoading, fetchUserRecords]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -61,10 +81,10 @@ export const MapContent = () => {
   };
 
   // 住所を取得する関数
-  const getCurrentAddress = async (lat, lng) => {
+  const getCurrentAddress = async (lat: number, lng: number): Promise<string> => {
     try {
       const geocoder = new google.maps.Geocoder();
-      const response = await new Promise((resolve, reject) => {
+      const response = await new Promise<string>((resolve, reject) => {
         geocoder.geocode({ location: { lat, lng } }, (results, status) => {
           if (status === 'OK' && results[0]) {
             resolve(results[0].formatted_address);
@@ -88,35 +108,44 @@ export const MapContent = () => {
     setCurrentAddress(address);
   };
 
-  // 画像選択の処理
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
+  // 画像選択・撮影の処理
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
+      setSelectedImageFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target.result);
+        setSelectedImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
   // 記録を保存する処理
-  const handleSaveRecord = () => {
-    // ここで実際の保存処理を実装
-    const recordData = {
-      location: center,
-      address: currentAddress,
-      image: selectedImage,
-      comment: comment,
-      timestamp: new Date().toISOString()
-    };
-    console.log('記録データ:', recordData);
-    
-    // モーダルを閉じて、フォームをリセット
-    setShowRecordModal(false);
-    setSelectedImage(null);
-    setComment('');
-    alert('記録を保存しました！');
+  const handleSaveRecord = async () => {
+    if (!selectedImageFile) {
+      alert('画像を選択してください');
+      return;
+    }
+
+    try {
+      await saveRecord(center, currentAddress, selectedImageFile, comment);
+      
+      // モーダルを閉じて、フォームをリセット
+      setShowRecordModal(false);
+      setSelectedImageFile(null);
+      setSelectedImagePreview(null);
+      setComment('');
+      
+      alert('記録を保存しました！');
+      
+      // 記録リストを再取得
+      const userRecords = await fetchUserRecords();
+      setRecords(userRecords);
+    } catch (error) {
+      console.error('記録の保存に失敗しました:', error);
+      alert('記録の保存に失敗しました。もう一度お試しください。');
+    }
   };
 
   // キャンセル確認の処理
@@ -127,7 +156,8 @@ export const MapContent = () => {
   const handleConfirmCancel = () => {
     setShowRecordModal(false);
     setShowConfirmDialog(false);
-    setSelectedImage(null);
+    setSelectedImageFile(null);
+    setSelectedImagePreview(null);
     setComment('');
   };
 
@@ -147,6 +177,28 @@ export const MapContent = () => {
     });
   };
 
+  // マーカークリック時の処理
+  const handleMarkerClick = (record: TravelRecord) => {
+    setSelectedRecord(record);
+  };
+
+  // InfoWindowを閉じる処理
+  const handleInfoWindowClose = () => {
+    setSelectedRecord(null);
+  };
+
+  // 日時をフォーマット
+  const formatDateTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
       <Map
@@ -156,6 +208,53 @@ export const MapContent = () => {
         ref={mapRef}
       >
         {!isLoading && <Marker position={center} />}
+        
+        {/* 記録されたマーカーを表示 */}
+        {records.map((record) => (
+          <Marker
+            key={record.id}
+            position={record.location}
+            onClick={() => handleMarkerClick(record)}
+            icon={{
+              url: "data:image/svg+xml;base64," + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="40" height="40">
+                  <ellipse cx="256" cy="350" rx="80" ry="60" fill="#d9cf8d"/>
+                  <ellipse cx="180" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
+                  <ellipse cx="256" cy="160" rx="40" ry="50" fill="#d9cf8d"/>
+                  <ellipse cx="332" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
+                  <ellipse cx="380" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
+                  <ellipse cx="132" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
+                  <ellipse cx="256" cy="355" rx="70" ry="50" fill="#c7bc73" opacity="0.7"/>
+                  <ellipse cx="180" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+                  <ellipse cx="256" cy="165" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+                  <ellipse cx="332" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+                  <ellipse cx="380" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
+                  <ellipse cx="132" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(40, 40),
+            }}
+          />
+        ))}
+
+        {/* InfoWindow（記録詳細のポップアップ） */}
+        {selectedRecord && (
+          <InfoWindow
+            position={selectedRecord.location}
+            onCloseClick={handleInfoWindowClose}
+          >
+            <div className={styles.infoWindow}>
+              <img 
+                src={selectedRecord.imageUrl} 
+                alt="記録画像" 
+                className={styles.infoWindowImage}
+              />
+              <div className={styles.infoWindowDate}>
+                {formatDateTime(selectedRecord.timestamp)}
+              </div>
+            </div>
+          </InfoWindow>
+        )}
       </Map>
       
       <button onClick={goToCurrentLocation} className={styles.currentwarp}>
@@ -173,11 +272,11 @@ export const MapContent = () => {
             {/* 画像挿入スペース */}
             <div className={styles.imageSection}>
               <label htmlFor="image-upload" className={styles.imageUploadLabel}>
-                {selectedImage ? (
-                  <img src={selectedImage} alt="選択された画像" className={styles.selectedImage} />
+                {selectedImagePreview ? (
+                  <img src={selectedImagePreview} alt="選択された画像" className={styles.selectedImage} />
                 ) : (
                   <div className={styles.imagePlaceholder}>
-                    <span>画像を選択</span>
+                    <span>画像を選択 / 撮影</span>
                   </div>
                 )}
               </label>
@@ -185,6 +284,7 @@ export const MapContent = () => {
                 id="image-upload"
                 type="file"
                 accept="image/*"
+                capture="environment"
                 onChange={handleImageChange}
                 className={styles.hiddenInput}
               />
@@ -214,8 +314,12 @@ export const MapContent = () => {
             </div>
 
             {/* 保存ボタン */}
-            <button onClick={handleSaveRecord} className={styles.saveButton}>
-              記録を保存
+            <button 
+              onClick={handleSaveRecord} 
+              className={styles.saveButton}
+              disabled={recordLoading}
+            >
+              {recordLoading ? '保存中...' : '記録を保存'}
             </button>
 
             {/* キャンセルボタン（赤い正円） */}
@@ -242,7 +346,6 @@ export const MapContent = () => {
           </div>
         </div>
       )}
-
 
     </APIProvider>
   );

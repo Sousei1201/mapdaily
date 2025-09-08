@@ -1,0 +1,257 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f2f2b0;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #d9cf8d;
+}
+
+.title {
+  font-size: 28px;
+  color: #82ae46;
+  font-weight: bold;
+  margin: 0;
+}
+
+.recordCount {
+  font-size: 16px;
+  color: #82ae46;
+  background-color: rgba(217, 205, 163, 0.7);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  background-color: #f2f2b0;
+}
+
+.loading {
+  font-size: 18px;
+  color: #82ae46;
+  font-weight: bold;
+}
+
+/* 空の状態 */
+.emptyState {
+  text-align: center;
+  margin-top: 100px;
+  color: #82ae46;
+}
+
+.emptyIcon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.emptyState h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #82ae46;
+}
+
+.emptyState p {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* 記録グリッド */
+.recordsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* 記録カード */
+.recordCard {
+  background-color: rgba(217, 205, 163, 0.9);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recordCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.imageContainer {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.recordImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.recordCard:hover .recordImage {
+  transform: scale(1.05);
+}
+
+.recordInfo {
+  padding: 15px;
+}
+
+.recordDate {
+  font-size: 14px;
+  color: #82ae46;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.recordAddress {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.recordComment {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* モーダル */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 236, 71, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modalContent {
+  background-color: rgb(217, 205, 163);
+  max-width: 600px;
+  max-height: 90vh;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow-y: auto;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.closeButton:hover {
+  background: rgba(255, 68, 68, 0.8);
+}
+
+.modalImage {
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.fullImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modalInfo {
+  padding: 20px;
+}
+
+.modalDate {
+  font-size: 18px;
+  color: #82ae46;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.modalAddress {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.modalComment {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.modalComment strong {
+  color: #82ae46;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.modalComment p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .recordsGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .modalContent {
+    margin: 10px;
+    max-height: 95vh;
+  }
+  
+  .title {
+    font-size: 24px;
+  }
+}
