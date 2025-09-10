@@ -18,7 +18,7 @@ export const MapContent = () => {
   const [comment, setComment] = useState('');
   const [isSaving, setIsSaving] = useState(false); // 保存状態を管理
   const mapRef = useRef(null);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   
 
   useEffect(() => {
@@ -176,13 +176,21 @@ export const MapContent = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loading}>読み込み中...</div>
+      </div>
+    );
+  }
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
       <Map
-        defaultCenter={center}
+        center={center}
         defaultZoom={15}
         disableDefaultUI={true}
-        ref={mapRef}
+        onLoad={(map) => { mapRef.current = map; }}
       >
         {!isLoading && <Marker position={center} />}
       </Map>

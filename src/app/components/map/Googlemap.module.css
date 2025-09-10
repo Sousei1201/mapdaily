@@ -294,3 +294,17 @@
 .dialogNo:hover {
   background-color: #26b1ed;
 }
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f2f2b0;
+}
+
+.loading {
+  font-size: 18px;
+  color: #82ae46;
+  font-weight: bold;
+}

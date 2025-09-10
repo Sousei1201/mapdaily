@@ -8,7 +8,6 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { LoginModal } from "@/app/components/auth/LoginModal";
 
 export default function Home() {
-  console.log("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY", process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
   const [showHowToUse, setShowHowToUse] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user, loading, signOut } = useAuth();
