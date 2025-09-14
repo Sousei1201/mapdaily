@@ -17,3 +17,15 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+// 開発環境でエミュレータを使用する場合（オプション）
+if (process.env.NODE_ENV === 'development') {
+  // 必要に応じてエミュレータに接続（既に接続済みの場合はスキップ）
+  try {
+    // connectAuthEmulator(auth, 'http://localhost:9099');
+    // connectFirestoreEmulator(db, 'localhost', 8080);
+    // connectStorageEmulator(storage, 'localhost', 9199);
+  } catch (error) {
+    console.log('Emulator connection skipped');
+  }
+}

@@ -4,9 +4,10 @@ import styles from "./Googlemap.module.css";
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
 import RecordIcon from './plus-solid.svg';
-import { db } from '../../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
 import { useAuth } from '../../hooks/useAuth';
+import { storage, db } from '../../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
 
 export const MapContent = () => {
   const [center, setCenter] = useState({ lat: 35.656, lng: 139.737 });
@@ -15,10 +16,11 @@ export const MapContent = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // 追加: File オブジェクトを保存
   const [comment, setComment] = useState('');
-  const [isSaving, setIsSaving] = useState(false); // 保存状態を管理
+  const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef(null);
-  const { user, loading } = useAuth();
+  const { user } = useAuth(); // 追加: ユーザー情報取得
   
 
   useEffect(() => {
@@ -93,10 +95,11 @@ export const MapContent = () => {
     setCurrentAddress(address);
   };
 
-  // 画像選択の処理
+  // 画像選択の処理 (修正: File オブジェクトも保存)
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setSelectedFile(file); // File オブジェクトを保存
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target.result);
@@ -105,16 +108,61 @@ export const MapContent = () => {
     }
   };
 
-  // 記録を保存する処理
+  // 画像をFirebase Storageにアップロードする関数
+  const uploadImageToStorage = async (file, userId) => {
+    try {
+      // ファイル名を生成 (タイムスタンプ + 元のファイル名)
+      const timestamp = new Date().getTime();
+      const fileName = `${timestamp}_${file.name}`;
+      
+      // Storage参照を作成 (ルールに合わせたパス)
+      const imageRef = ref(storage, `travel-images/${userId}/${fileName}`);
+      
+      // ファイルをアップロード
+      const snapshot = await uploadBytes(imageRef, file);
+      console.log('画像アップロード完了:', snapshot);
+      
+      // ダウンロードURLを取得
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      console.log('ダウンロードURL:', downloadURL);
+      
+      return downloadURL;
+    } catch (error) {
+      console.error('画像アップロードエラー:', error);
+      throw error;
+    }
+  };
+
+  // 記録をFirestoreに保存する関数
+  const saveRecordToFirestore = async (recordData) => {
+    try {
+      const docRef = await addDoc(collection(db, 'travel-records'), recordData);
+      console.log('記録保存完了:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('記録保存エラー:', error);
+      throw error;
+    }
+  };
+
+  // 記録を保存する処理 (修正: 実際のアップロード処理を実装)
   const handleSaveRecord = async () => {
     if (!user) {
       alert('ログインが必要です');
       return;
     }
 
-    setIsSaving(true); // 保存開始
+    setUploading(true);
 
     try {
+      let imageURL = null;
+
+      // 画像がある場合はアップロード
+      if (selectedFile) {
+        imageURL = await uploadImageToStorage(selectedFile, user.uid);
+      }
+
+      // 記録データを作成
       const recordData = {
         userId: user.uid,
         location: {
@@ -122,29 +170,35 @@ export const MapContent = () => {
           lng: center.lng
         },
         address: currentAddress,
-        image: selectedImage, // base64形式の画像データ
+        imageURL: imageURL,
         comment: comment,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
         createdAt: new Date()
       };
 
       // Firestoreに保存
-      const docRef = await addDoc(collection(db, 'records'), recordData);
-      console.log('記録が保存されました。ID:', docRef.id);
-      
-      // 成功時の処理
-      alert('記録を保存しました！');
+      await saveRecordToFirestore(recordData);
       
       // モーダルを閉じて、フォームをリセット
       setShowRecordModal(false);
       setSelectedImage(null);
+      setSelectedFile(null);
       setComment('');
-      
+      alert('記録を保存しました！');
+
     } catch (error) {
-      console.error('記録の保存に失敗しました:', error);
-      alert('記録の保存に失敗しました。もう一度お試しください。');
+      console.error('保存処理エラー:', error);
+      
+      // エラーメッセージをより詳細に
+      if (error.code === 'storage/unauthorized') {
+        alert('画像のアップロード権限がありません。ログインを確認してください。\nユーザーID: ${user?.uid}\nエラー: ${error.message}');
+      } else if (error.code === 'permission-denied') {
+        alert('データベースへの書き込み権限がありません。');
+      } else {
+        alert('保存に失敗しました。もう一度お試しください。');
+      }
     } finally {
-      setIsSaving(false); // 保存完了（成功・失敗問わず）
+      setUploading(false);
     }
   };
 
@@ -157,6 +211,7 @@ export const MapContent = () => {
     setShowRecordModal(false);
     setShowConfirmDialog(false);
     setSelectedImage(null);
+    setSelectedFile(null); // 追加: File オブジェクトもリセット
     setComment('');
   };
 
@@ -176,21 +231,13 @@ export const MapContent = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loading}>読み込み中...</div>
-      </div>
-    );
-  }
-
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
       <Map
-        center={center}
+        defaultCenter={center}
         defaultZoom={15}
         disableDefaultUI={true}
-        onLoad={(map) => { mapRef.current = map; }}
+        ref={mapRef}
       >
         {!isLoading && <Marker position={center} />}
       </Map>
@@ -224,7 +271,7 @@ export const MapContent = () => {
                 accept="image/*"
                 onChange={handleImageChange}
                 className={styles.hiddenInput}
-                disabled={isSaving}
+                disabled={uploading} // アップロード中は無効化
               />
             </div>
 
@@ -248,24 +295,24 @@ export const MapContent = () => {
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="旅の思い出を記録しましょう..."
                 className={styles.commentInput}
-                disabled={isSaving}
+                disabled={uploading} // アップロード中は無効化
               />
             </div>
 
-            {/* 保存ボタン */}
+            {/* 保存ボタン (修正: アップロード状態を表示) */}
             <button 
               onClick={handleSaveRecord} 
               className={styles.saveButton}
-              disabled={isSaving}
+              disabled={uploading}
             >
-              {isSaving ? '保存中...' : '記録を保存'}
+              {uploading ? '保存中...' : '記録を保存'}
             </button>
 
-            {/* キャンセルボタン（赤い正円） */}
+            {/* キャンセルボタン (修正: アップロード中は無効化) */}
             <button 
               onClick={handleCancelClick} 
               className={styles.cancelButton}
-              disabled={isSaving}
+              disabled={uploading}
             >
               ×
             </button>
