@@ -6,6 +6,7 @@ import {MapContent} from "./components/map/Googlemap";
 import { APIProvider } from "@vis.gl/react-google-maps";    
 import { useAuth } from "@/app/hooks/useAuth";
 import { LoginModal } from "@/app/components/auth/LoginModal";
+import Link from "next/link";
 
 export default function Home() {
   const [showHowToUse, setShowHowToUse] = useState(false);
@@ -47,7 +48,7 @@ export default function Home() {
             <a onClick={handleHowToUseClick}>つかいかた</a>
             {user ? (
               <>
-                <a>きろく一覧</a>
+                <Link href="./records">きろく一覧</Link>
                 <a onClick={handleSignOut} className={styles.signOutButton}>
                   ログアウト
                 </a>

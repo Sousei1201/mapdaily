@@ -20,7 +20,7 @@ export const MapContent = () => {
   const [comment, setComment] = useState('');
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef(null);
-  const { user } = useAuth(); // 追加: ユーザー情報取得
+  const { user, loading } = useAuth(); // 追加: ユーザー情報取得
   
 
   useEffect(() => {
@@ -231,21 +231,31 @@ export const MapContent = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loading}>読み込み中...</div>
+      </div>
+    );
+  }
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
-      <Map
-        defaultCenter={center}
-        defaultZoom={15}
-        disableDefaultUI={true}
-        ref={mapRef}
-      >
-        {!isLoading && <Marker position={center} />}
-      </Map>
+
       
       <button onClick={goToCurrentLocation} className={styles.currentwarp}>
         <NavigationIcon className={styles.navIcon} />
       </button>
-      
+        {!isLoading && (
+          <Map
+            defaultCenter={center}
+            defaultZoom={15}
+            disableDefaultUI={true}
+            ref={mapRef}
+          >
+            <Marker position={center} />
+          </Map>
+        )}      
       <button onClick={handleRecordClick} className={styles.recordmenu}>
         <RecordIcon className={styles.plusIcon} />
       </button>

@@ -1,0 +1,156 @@
+.page {
+  background-color: #f2f2b0;
+  height: 100vh;
+  width: 100%;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 1000;
+  background: #d9cf8d;
+  color: #82ae46;
+  font-family: "UD 新ゴ M";
+}
+
+.headertext {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav a {
+  list-style: none;
+  cursor: pointer;
+  padding: 33px 20px;
+  color: #82ae46;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  background-color: rgba(130, 174, 70, 0.1);
+}
+
+.currentPage {
+  padding: 33px 20px;
+  color: #82ae46;
+  font-weight: bold;
+  background-color: rgba(130, 174, 70, 0.1);
+}
+
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  color: #82ae46;
+  text-decoration: none;
+}
+
+.title:hover {
+  color: #6d9139;
+}
+
+.content {
+  width: 100%;
+  height: calc(100vh - 70px);
+  margin-top: 70px;
+  padding: 20px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f2f2b0;
+}
+
+.loading {
+  font-size: 18px;
+  color: #82ae46;
+  font-weight: bold;
+}
+
+.loginRequired {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f2f2b0;
+}
+
+.loginMessage {
+  text-align: center;
+  background-color: rgba(217, 205, 163, 0.9);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.loginMessage h2 {
+  color: #82ae46;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.loginMessage p {
+  color: #82ae46;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.loginButton {
+  background-color: #82ae46;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.loginButton:hover {
+  background-color: #6d9139;
+}
+
+.recordsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  color: #82ae46;
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.recordsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #82ae46;
+  font-size: 18px;
+  margin-top: 50px;
+  padding: 40px;
+  background-color: rgba(217, 205, 163, 0.5);
+  border-radius: 15px;
+}
