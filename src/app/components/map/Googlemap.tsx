@@ -7,7 +7,33 @@ import RecordIcon from './plus-solid.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { storage, db } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+
+interface RecordData {
+  id?: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  address: string;
+  image: string | null;
+  comment: string;
+  timestamp: string;
+  createdAt: Date;
+}
+
+      // const recordData = {
+      //   userId: user.uid,
+      //   location: {
+      //     lat: center.lat,
+      //     lng: center.lng
+      //   },
+      //   address: currentAddress,
+      //   imageURL: imageURL,
+      //   comment: comment,
+      //   timestamp: new Date().toISOString(),
+      //   createdAt: new Date()
+      // };
 
 export const MapContent = () => {
   const [center, setCenter] = useState({ lat: 35.656, lng: 139.737 });
@@ -15,14 +41,40 @@ export const MapContent = () => {
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [currentAddress, setCurrentAddress] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null); // 追加: File オブジェクトを保存
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // 追加: File オブジェクトを保存
   const [comment, setComment] = useState('');
+  const [records, setRecords] = useState<RecordData[]>([]);
+  const [selectedRecord, setSelectedRecord] = useState<RecordData | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
-  const mapRef = useRef(null);
-  const { user, loading } = useAuth(); // 追加: ユーザー情報取得
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
+ // --- Firestore リアルタイム同期 ---
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, 'travel-records'),
+      where("userId", "==", user.uid)
+    );
 
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => {
+        const d = doc.data();
+        return {
+          id: doc.id,
+          ...d,
+          createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
+        } as RecordData;
+      });
+      setRecords(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+// --- 現在地の取得 ---
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -163,21 +215,34 @@ export const MapContent = () => {
       }
 
       // 記録データを作成
-      const recordData = {
-        userId: user.uid,
+      // const recordData = {
+      //   userId: user.uid,
+      //   location: {
+      //     lat: center.lat,
+      //     lng: center.lng
+      //   },
+      //   address: currentAddress,
+      //   imageURL: imageURL,
+      //   comment: comment,
+      //   timestamp: new Date().toISOString(),
+      //   createdAt: new Date()
+      // };
+
+      const newRecord: RecordData = {
+        id: user.uid,
         location: {
           lat: center.lat,
           lng: center.lng
         },
         address: currentAddress,
-        imageURL: imageURL,
+        image: imageURL,
         comment: comment,
         timestamp: new Date().toISOString(),
         createdAt: new Date()
       };
 
       // Firestoreに保存
-      await saveRecordToFirestore(recordData);
+      await saveRecordToFirestore(newRecord);
       
       // モーダルを閉じて、フォームをリセット
       setShowRecordModal(false);
@@ -205,6 +270,24 @@ export const MapContent = () => {
   // キャンセル確認の処理
   const handleCancelClick = () => {
     setShowConfirmDialog(true);
+  };
+
+ // 肉球ピンクリックの処理
+  const handleRecordMarkerClick = (record : RecordData) => {
+    setSelectedRecord(record);
+    setShowPopup(true);
+  };
+
+  // ポップアップを閉じる処理
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedRecord(null);
+  };
+
+    // --- 日時フォーマット ---
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString('ja-JP');
   };
 
   const handleConfirmCancel = () => {
@@ -239,6 +322,13 @@ export const MapContent = () => {
     );
   }
 
+  // 肉球アイコンコンポーネント
+  const PawMarkerIcon = () => (
+    <div className={styles.pawMarker}>
+      <PawIcon className={styles.pawIcon} />
+    </div>
+  );
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
 
@@ -253,7 +343,17 @@ export const MapContent = () => {
             disableDefaultUI={true}
             ref={mapRef}
           >
-            <Marker position={center} />
+          <Marker position={center} />
+          {/* 記録された場所の肉球ピン */}
+          {records.map((record) => (
+            <Marker
+              key={`${record.id}-${record.location.lat}-${record.location.lng}`}
+              position={record.location}
+              onClick={() => handleRecordMarkerClick(record)}
+            >
+              <PawMarkerIcon />
+            </Marker>
+            ))}
           </Map>
         )}      
       <button onClick={handleRecordClick} className={styles.recordmenu}>
@@ -342,6 +442,45 @@ export const MapContent = () => {
               <button onClick={handleCancelCancel} className={styles.dialogNo}>
                 いいえ
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 記録ポップアップ */}
+      {showPopup && selectedRecord && (
+        <div className={styles.popupOverlay} onClick={handleClosePopup}>
+          <div className={styles.popupContent} onClick={(e) => e.stopPropagation()}>
+            <button onClick={handleClosePopup} className={styles.popupCloseButton}>
+              ×
+            </button>
+            
+            {/* 画像表示 */}
+            {selectedRecord.image && (
+              <div className={styles.popupImageContainer}>
+                <img 
+                  src={selectedRecord.image} 
+                  alt="記録した画像" 
+                  className={styles.popupImage}
+                />
+              </div>
+            )}
+            
+            {/* 日時表示 */}
+            <div className={styles.popupDateTime}>
+              {formatDateTime(selectedRecord.timestamp)}
+            </div>
+            
+            {/* コメント表示 */}
+            {selectedRecord.comment && (
+              <div className={styles.popupComment}>
+                {selectedRecord.comment}
+              </div>
+            )}
+            
+            {/* 住所表示 */}
+            <div className={styles.popupAddress}>
+              {selectedRecord.address}
             </div>
           </div>
         </div>
