@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useContext } from 'react';
-import { User } from '/auth';
+import { User } from 'firebase/auth';
 import { useAuth as useAuthHook } from '../../hooks/useAuth';
 
 interface AuthContextType {

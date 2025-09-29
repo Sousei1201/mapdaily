@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 
 interface RecordData {
-  userId: string;
+  id?: string;
   location: {
     lat: number;
     lng: number;
@@ -23,7 +23,7 @@ interface RecordData {
 }
 
       // const recordData = {
-      //   : user.uid,
+      //   userId : user.uid,
       //   location: {
       //     lat: center.lat,
       //     lng: center.lng
