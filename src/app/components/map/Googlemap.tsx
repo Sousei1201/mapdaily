@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 
 interface RecordData {
-  id?: string;
+  userId: string;
   location: {
     lat: number;
     lng: number;
@@ -52,7 +52,7 @@ export const MapContent = () => {
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
  // --- Firestore リアルタイム同期 ---
-  useEffect(() => {
+ useEffect(() => {
     if (!user) return;
     const q = query(
       collection(db, 'travel-records'),
@@ -72,7 +72,7 @@ export const MapContent = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
 // --- 現在地の取得 ---
   useEffect(() => {
@@ -229,7 +229,7 @@ export const MapContent = () => {
       // };
 
       const newRecord: RecordData = {
-        userId: "CJiZuZbH9MbNkYgnPAspEBL616G3",
+        userId: user.uid,
         location: {
           lat: center.lat,
           lng: center.lng
@@ -347,7 +347,7 @@ export const MapContent = () => {
           {/* 記録された場所の肉球ピン */}
           {records.map((record) => (
             <Marker
-              key={`${record.id}-${record.location.lat}-${record.location.lng}`}
+              key={`${record.userId}-${record.location.lat}-${record.location.lng}`}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
             >
