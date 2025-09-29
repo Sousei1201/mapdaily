@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 
 interface RecordData {
-  id?: string;
+  userId: string;
   location: {
     lat: number;
     lng: number;
@@ -23,7 +23,7 @@ interface RecordData {
 }
 
       // const recordData = {
-      //   userId: user.uid,
+      //   : user.uid,
       //   location: {
       //     lat: center.lat,
       //     lng: center.lng
@@ -63,7 +63,7 @@ export const MapContent = () => {
       const data = snapshot.docs.map((doc) => {
         const d = doc.data();
         return {
-          id: doc.id,
+          userId: doc.id,
           ...d,
           createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
         } as RecordData;
@@ -188,7 +188,7 @@ export const MapContent = () => {
   // 記録をFirestoreに保存する関数
   const saveRecordToFirestore = async (recordData) => {
     try {
-      const docRef = await addDoc(collection(db, 'travel-records'), recordData);
+      const docRef = await addDoc(collection(db, `travel-records/`), recordData);
       console.log('記録保存完了:', docRef.id);
       return docRef.id;
     } catch (error) {
@@ -229,7 +229,7 @@ export const MapContent = () => {
       // };
 
       const newRecord: RecordData = {
-        id: user.uid,
+        userId: "CJiZuZbH9MbNkYgnPAspEBL616G3",
         location: {
           lat: center.lat,
           lng: center.lng
@@ -351,7 +351,6 @@ export const MapContent = () => {
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
             >
-              <PawMarkerIcon />
             </Marker>
             ))}
           </Map>
