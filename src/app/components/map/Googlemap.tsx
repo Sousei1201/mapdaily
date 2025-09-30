@@ -241,9 +241,12 @@ export const MapContent = () => {
       };
 
       const newId = await saveRecordToFirestore(newRecord);
+    
 
       // id を埋めてから state に追加すると key 重複が防げる
       setRecords((prev) => [...prev, { ...newRecord, id: newId }]);
+
+      console.log(newRecord);
 
       // Firestoreに保存
       await saveRecordToFirestore(newRecord);
@@ -326,6 +329,19 @@ export const MapContent = () => {
     );
   }
 
+  //マーカーピンのオプション
+  const PawPinOptions = {
+    background: '#82ae46',
+    borderColor: '#6d9139',
+    glyphColor: '#82ae46',
+  };
+
+   const PinOptions = {
+    background: '#ffec47',
+    borderColor: '#6d9139',
+    glyphColor: '#82ae46',
+  };
+
   // 肉球アイコンコンポーネント
   // const PawIcon = () => (
   //   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="40" height="40">
@@ -361,10 +377,7 @@ export const MapContent = () => {
           >
          {/* 現在地マーカー */}
           <AdvancedMarker position={center}>
-            <Pin 
-            background={'#82ae46'} 
-            borderColor={'#6d9139'} 
-            glyphColor={'#ffffff'} 
+            <Pin {...PinOptions}
             />
           </AdvancedMarker> 
           {/* 記録された場所の肉球ピン */}
@@ -375,14 +388,11 @@ export const MapContent = () => {
               onClick={() => handleRecordMarkerClick(record)}
             >
               <div className={styles.pawMarkerWrapper}>
-               <Pin
-                background={'#82ae46'}
-                borderColor={'#6d9139'} 
-                glyphColor={'#ffffff'} 
-                />
+               <Pin {...PawPinOptions}>
                 <div className={styles.pawIconContainer}>
                   <PawIcon/>
                 </div>
+               </Pin>              
               </div>
             </AdvancedMarker>
           ))}
