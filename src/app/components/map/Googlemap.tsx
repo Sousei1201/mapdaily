@@ -52,6 +52,7 @@ export const MapContent = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef<google.maps.Map | null>(null);
+  const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
   
@@ -240,6 +241,8 @@ export const MapContent = () => {
 
       };
 
+      
+
       const newId = await saveRecordToFirestore(newRecord);
     
 
@@ -280,13 +283,20 @@ export const MapContent = () => {
   };
 
  // 肉球ピンクリックの処理
-  const handleRecordMarkerClick = (record : RecordData) => {
+  const handleRecordMarkerHover = (record : RecordData, event: React.MouseEvent) => {
     setSelectedRecord(record);
     setShowPopup(true);
+    // マウスカーソルの位置を取得
+    setPopupPosition({
+      x: event.clientX,
+      y: event.clientY
+    }); 
   };
 
+  console.log(records)
+
   // ポップアップを閉じる処理
-  const handleClosePopup = () => {
+  const handleRecordMarkerLeave = () => {
     setShowPopup(false);
     setSelectedRecord(null);
   };
@@ -385,17 +395,22 @@ export const MapContent = () => {
             <AdvancedMarker
               key={`${record.id}-${record.location.lat}-${record.location.lng}`}
               position={record.location}
-              onClick={() => handleRecordMarkerClick(record)}
+              onMouseEnter={(e) => handleRecordMarkerHover(record, e)}
+              onMouseLeave={handleRecordMarkerLeave}
+
             >
               <div className={styles.pawMarkerWrapper}>
                <Pin {...PawPinOptions}>
                 <div className={styles.pawIconContainer}>
                   <PawIcon/>
+
                 </div>
                </Pin>              
               </div>
             </AdvancedMarker>
+ 
           ))}
+          
           </Map>
         )}      
       <button onClick={handleRecordClick} className={styles.recordmenu}>
@@ -490,40 +505,45 @@ export const MapContent = () => {
       )}
 
       {/* 記録ポップアップ */}
-      {showPopup && selectedRecord && (
-        <div className={styles.popupOverlay} onClick={handleClosePopup}>
-          <div className={styles.popupContent} onClick={(e) => e.stopPropagation()}>
-            <button onClick={handleClosePopup} className={styles.popupCloseButton}>
-              ×
-            </button>
-            
-            {/* 画像表示 */}
-            {selectedRecord.image && (
-              <div className={styles.popupImageContainer}>
-                <img 
-                  src={selectedRecord.image} 
-                  alt="記録した画像" 
-                  className={styles.popupImage}
-                />
-              </div>
-            )}
-            
-            {/* 日時表示 */}
-            <div className={styles.popupDateTime}>
-              {formatDateTime(selectedRecord.timestamp)}
+      {/* 記録ポップアップ（ホバー表示） */}
+      {showPopup && selectedRecord && popupPosition &&(
+        <div 
+        className={styles.hoverPopup}
+        style={{
+          left: `${popupPosition.x}px`,
+          top: `${popupPosition.y - 20}px`, // ピンの上に表示（20pxは調整値）
+          transform: 'translate(-50%, -100%)' // 中央揃え + 上に配置
+        }}
+        >
+          {/* 吹き出しの三角形 */}
+          <div className={styles.popupArrow}></div>
+          
+          {/* 画像表示 */}
+          {selectedRecord.image && (
+            <div className={styles.hoverPopupImageContainer}>
+              <img 
+                src={selectedRecord.image} 
+                alt="記録した画像" 
+                className={styles.hoverPopupImage}
+              />
             </div>
-            
-            {/* コメント表示 */}
-            {selectedRecord.comment && (
-              <div className={styles.popupComment}>
-                {selectedRecord.comment}
-              </div>
-            )}
-            
-            {/* 住所表示 */}
-            <div className={styles.popupAddress}>
-              {selectedRecord.address}
+          )}
+          
+          {/* 日時表示 */}
+          <div className={styles.hoverPopupDateTime}>
+            {formatDateTime(selectedRecord.timestamp)}
+          </div>
+          
+          {/* コメント表示 */}
+          {selectedRecord.comment && (
+            <div className={styles.hoverPopupComment}>
+              {selectedRecord.comment}
             </div>
+          )}
+          
+          {/* 住所表示 */}
+          <div className={styles.hoverPopupAddress}>
+            {selectedRecord.address}
           </div>
         </div>
       )}
