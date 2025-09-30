@@ -8,9 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "debug": "NODE_OPTIONS='--inspect' next dev"
-
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.6.2",
     "@vis.gl/react-google-maps": "^1.5.4",
     "firebase": "^12.2.1",
     "next": "^15.5.2",

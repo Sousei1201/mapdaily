@@ -1,15 +1,18 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import styles from "./Googlemap.module.css";
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
 import RecordIcon from './plus-solid.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { storage, db } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, where, orderBy, doc } from 'firebase/firestore';
+// import PawIcon from './paw-solid.svg';
+import Image from 'next/image';
 
 interface RecordData {
+  id: string;
   userId: string;
   location: {
     lat: number;
@@ -50,6 +53,8 @@ export const MapContent = () => {
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef<google.maps.Map | null>(null);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
+  const parser = new DOMParser();
+
   
  // --- Firestore リアルタイム同期 ---
  useEffect(() => {
@@ -63,9 +68,14 @@ export const MapContent = () => {
       const data = snapshot.docs.map((doc) => {
         const d = doc.data();
         return {
-          userId: doc.id,
-          ...d,
-          createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
+        id: doc.id,  
+        userId: d.userId,
+        location: d.location,
+        address: d.address,
+        image: d.image,
+        comment: d.comment,
+        timestamp: d.timestamp,
+        createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
         } as RecordData;
       });
       setRecords(data);
@@ -227,6 +237,10 @@ export const MapContent = () => {
       //   timestamp: new Date().toISOString(),
       //   createdAt: new Date()
       // };
+      const saveRecordToFirestore = async (recordData) => {
+        const docRef = await addDoc(collection(db, `travel-records`), recordData);
+        return docRef.id;
+      };
 
       const newRecord: RecordData = {
         userId: user.uid,
@@ -239,7 +253,13 @@ export const MapContent = () => {
         comment: comment,
         timestamp: new Date().toISOString(),
         createdAt: new Date()
+
       };
+
+      const newId = await saveRecordToFirestore(newRecord);
+
+      // id を埋めてから state に追加すると key 重複が防げる
+      setRecords((prev) => [...prev, { ...newRecord, id: newId }]);
 
       // Firestoreに保存
       await saveRecordToFirestore(newRecord);
@@ -331,10 +351,10 @@ export const MapContent = () => {
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
-
       
       <button onClick={goToCurrentLocation} className={styles.currentwarp}>
         <NavigationIcon className={styles.navIcon} />
+
       </button>
         {!isLoading && (
           <Map
@@ -343,15 +363,22 @@ export const MapContent = () => {
             disableDefaultUI={true}
             ref={mapRef}
           >
-          <Marker position={center} />
+          <Marker 
+          position={center} 
+    
+          />
           {/* 記録された場所の肉球ピン */}
           {records.map((record) => (
             <Marker
-              key={`${record.userId}-${record.location.lat}-${record.location.lng}`}
+              key={record.id}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
-            >
-            </Marker>
+              icon={{
+                url:'./paw-solid.svg',
+                scaledSize:new google.maps.Size(30, 30), 
+                anchor: new google.maps.Point(15, 39),      
+               }}
+            />
             ))}
           </Map>
         )}      
