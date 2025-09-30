@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, use } from 'react';
 import styles from "./Googlemap.module.css";
 import { APIProvider, Map, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
@@ -123,6 +123,13 @@ export const MapContent = () => {
       alert("このブラウザではGeolocationがサポートされていません。");
     }
   };
+
+ // 位置やレコードが更新されたらポップアップを表示
+ useEffect(() => {
+    if (popupPosition && selectedRecord) {
+      setShowPopup(true);
+    }
+  },[popupPosition, selectedRecord]);
 
   // 住所を取得する関数
   const getCurrentAddress = async (lat, lng) => {
@@ -282,15 +289,14 @@ export const MapContent = () => {
     setShowConfirmDialog(true);
   };
 
- // 肉球ピンクリックの処理
+ // 肉球ピンホバーの処理
   const handleRecordMarkerHover = (record : RecordData, event: React.MouseEvent) => {
-    setSelectedRecord(record);
-    setShowPopup(true);
-    // マウスカーソルの位置を取得
+    // 先にポジションを設定
     setPopupPosition({
       x: event.clientX,
       y: event.clientY
-    }); 
+    });
+    setSelectedRecord(record);
   };
 
   console.log(records)
