@@ -1,15 +1,15 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import styles from "./Googlemap.module.css";
-import { APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
+import { APIProvider, Map, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
 import RecordIcon from './plus-solid.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { storage, db } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, onSnapshot, query, where, orderBy, doc } from 'firebase/firestore';
-// import PawIcon from './paw-solid.svg';
-import Image from 'next/image';
+import PawIcon from './paw-solid.svg';
+
 
 interface RecordData {
   id: string;
@@ -53,8 +53,7 @@ export const MapContent = () => {
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef<google.maps.Map | null>(null);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
-  const parser = new DOMParser();
-
+  
   
  // --- Firestore リアルタイム同期 ---
  useEffect(() => {
@@ -69,12 +68,7 @@ export const MapContent = () => {
         const d = doc.data();
         return {
         id: doc.id,  
-        userId: d.userId,
-        location: d.location,
-        address: d.address,
-        image: d.image,
-        comment: d.comment,
-        timestamp: d.timestamp,
+        ...d,
         createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
         } as RecordData;
       });
@@ -195,17 +189,7 @@ export const MapContent = () => {
     }
   };
 
-  // 記録をFirestoreに保存する関数
-  const saveRecordToFirestore = async (recordData) => {
-    try {
-      const docRef = await addDoc(collection(db, `travel-records/`), recordData);
-      console.log('記録保存完了:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('記録保存エラー:', error);
-      throw error;
-    }
-  };
+  
 
   // 記録を保存する処理 (修正: 実際のアップロード処理を実装)
   const handleSaveRecord = async () => {
@@ -343,11 +327,22 @@ export const MapContent = () => {
   }
 
   // 肉球アイコンコンポーネント
-  const PawMarkerIcon = () => (
-    <div className={styles.pawMarker}>
-      <PawIcon className={styles.pawIcon} />
-    </div>
-  );
+  // const PawIcon = () => (
+  //   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="40" height="40">
+  //     <ellipse cx="256" cy="350" rx="80" ry="60" fill="#d9cf8d"/>
+  //     <ellipse cx="180" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
+  //     <ellipse cx="256" cy="160" rx="40" ry="50" fill="#d9cf8d"/>
+  //     <ellipse cx="332" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
+  //     <ellipse cx="380" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
+  //     <ellipse cx="132" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
+  //     <ellipse cx="256" cy="355" rx="70" ry="50" fill="#c7bc73" opacity="0.7"/>
+  //     <ellipse cx="180" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+  //     <ellipse cx="256" cy="165" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+  //     <ellipse cx="332" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
+  //     <ellipse cx="380" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
+  //     <ellipse cx="132" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
+  //   </svg>
+  // ); 
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>
@@ -361,25 +356,36 @@ export const MapContent = () => {
             defaultCenter={center}
             defaultZoom={15}
             disableDefaultUI={true}
+            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
             ref={mapRef}
           >
-          <Marker 
-          position={center} 
-    
-          />
+         {/* 現在地マーカー */}
+          <AdvancedMarker position={center}>
+            <Pin 
+            background={'#82ae46'} 
+            borderColor={'#6d9139'} 
+            glyphColor={'#ffffff'} 
+            />
+          </AdvancedMarker> 
           {/* 記録された場所の肉球ピン */}
           {records.map((record) => (
-            <Marker
-              key={record.id}
+            <AdvancedMarker
+              key={`${record.id}-${record.location.lat}-${record.location.lng}`}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
-              icon={{
-                url:'./paw-solid.svg',
-                scaledSize:new google.maps.Size(30, 30), 
-                anchor: new google.maps.Point(15, 39),      
-               }}
-            />
-            ))}
+            >
+              <div className={styles.pawMarkerWrapper}>
+               <Pin
+                background={'#82ae46'}
+                borderColor={'#6d9139'} 
+                glyphColor={'#ffffff'} 
+                />
+                <div className={styles.pawIconContainer}>
+                  <PawIcon/>
+                </div>
+              </div>
+            </AdvancedMarker>
+          ))}
           </Map>
         )}      
       <button onClick={handleRecordClick} className={styles.recordmenu}>
