@@ -341,7 +341,7 @@
   padding: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   z-index: 1100;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 /* 吹き出しの三角形 */
@@ -408,4 +408,160 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* 詳細画面の閉じるボタン */
+.detailCloseButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  line-height: 1;
+}
+
+.detailCloseButton:hover {
+  color: #ff4444;
+}
+
+/* コメント表示エリア（編集不可） */
+.commentDisplay {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 12px;
+  border-radius: 8px;
+  color: #333;
+  min-height: 100px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* レスポンシブデザイン - タブレット */
+@media (max-width: 1024px) {
+  .modalContent {
+    width: 85%;
+    padding: 18px;
+  }
+
+  .recordmenu, .currentwarp {
+    width: 55px;
+    height: 55px;
+  }
+
+  .navIcon, .plusIcon {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* レスポンシブデザイン - スマートフォン */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    padding: 15px;
+    max-height: 85vh;
+  }
+
+  .recordmenu {
+    width: 50px;
+    height: 50px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .currentwarp {
+    width: 50px;
+    height: 50px;
+    bottom: 75px;
+    right: 15px;
+  }
+
+  .navIcon, .plusIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .fieldLabel {
+    font-size: 14px;
+  }
+
+  .imageUploadLabel {
+    height: 150px;
+  }
+
+  .hoverPopup {
+    width: 200px;
+    padding: 10px;
+  }
+
+  .hoverPopupImage {
+    height: 100px;
+  }
+}
+
+/* レスポンシブデザイン - 小型スマートフォン */
+@media (max-width: 480px) {
+  .modalContent {
+    width: 95%;
+    padding: 12px;
+  }
+
+  .recordmenu {
+    width: 45px;
+    height: 45px;
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .currentwarp {
+    width: 45px;
+    height: 45px;
+    bottom: 67px;
+    right: 12px;
+  }
+
+  .navIcon, .plusIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fieldLabel {
+    font-size: 13px;
+  }
+
+  .commentInput {
+    height: 80px;
+    font-size: 13px;
+  }
+
+  .saveButton {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .hoverPopup {
+    width: 180px;
+    padding: 8px;
+  }
+
+  .hoverPopupImage {
+    height: 80px;
+  }
+
+  .hoverPopupDateTime {
+    font-size: 11px;
+  }
+
+  .hoverPopupComment, .hoverPopupAddress {
+    font-size: 11px;
+  }
 }

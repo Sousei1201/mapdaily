@@ -53,6 +53,8 @@ export const MapContent = () => {
   const [uploading, setUploading] = useState(false); // 追加: アップロード状態
   const mapRef = useRef<google.maps.Map | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
+  const [showRecordDetail, setShowRecordDetail] = useState(false);
+  const [detailRecord, setDetailRecord] = useState<RecordData | null>(null);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
   
@@ -124,12 +126,6 @@ export const MapContent = () => {
     }
   };
 
- // 位置やレコードが更新されたらポップアップを表示
- useEffect(() => {
-    if (popupPosition && selectedRecord) {
-      setShowPopup(true);
-    }
-  },[popupPosition, selectedRecord]);
 
   // 住所を取得する関数
   const getCurrentAddress = async (lat, lng) => {
@@ -289,14 +285,42 @@ export const MapContent = () => {
     setShowConfirmDialog(true);
   };
 
- // 肉球ピンホバーの処理
+ // 肉球ピンクリック時の処理（詳細表示）
+  const handleRecordMarkerClick = (record: RecordData) => {
+    // ホバーポップアップを閉じる
+    setShowPopup(false);
+    setSelectedRecord(null);
+    setPopupPosition(null);
+
+    setDetailRecord(record);
+    setShowRecordDetail(true);
+  };
+
+  // タッチデバイスかどうかを判定
+  const isTouchDevice = () => {
+    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  };
+
+  // 肉球ピンホバーの処理
   const handleRecordMarkerHover = (record : RecordData, event: React.MouseEvent) => {
+    // タッチデバイス（スマホ・タブレット）ではホバー処理をスキップ
+    if (isTouchDevice()) {
+      return;
+    }
+
+    // ピンの中央座標を取得
+    const target = event.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
     // 先にポジションを設定
     setPopupPosition({
-      x: event.clientX,
-      y: event.clientY
+      x: centerX,
+      y: centerY
     });
     setSelectedRecord(record);
+    setShowPopup(true);
   };
 
   console.log(records)
@@ -305,6 +329,13 @@ export const MapContent = () => {
   const handleRecordMarkerLeave = () => {
     setShowPopup(false);
     setSelectedRecord(null);
+    setPopupPosition(null);
+  };
+
+  // 詳細画面を閉じる処理
+  const handleCloseDetail = () => {
+    setShowRecordDetail(false);
+    setDetailRecord(null);
   };
 
     // --- 日時フォーマット ---
@@ -401,6 +432,7 @@ export const MapContent = () => {
             <AdvancedMarker
               key={`${record.id}-${record.location.lat}-${record.location.lng}`}
               position={record.location}
+              onClick={() => handleRecordMarkerClick(record)}
               onMouseEnter={(e) => handleRecordMarkerHover(record, e)}
               onMouseLeave={handleRecordMarkerLeave}
 
@@ -411,7 +443,7 @@ export const MapContent = () => {
                   <PawIcon/>
 
                 </div>
-               </Pin>              
+               </Pin>
               </div>
             </AdvancedMarker>
  
@@ -513,43 +545,93 @@ export const MapContent = () => {
       {/* 記録ポップアップ */}
       {/* 記録ポップアップ（ホバー表示） */}
       {showPopup && selectedRecord && popupPosition &&(
-        <div 
+        <div
         className={styles.hoverPopup}
         style={{
           left: `${popupPosition.x}px`,
           top: `${popupPosition.y - 20}px`, // ピンの上に表示（20pxは調整値）
           transform: 'translate(-50%, -100%)' // 中央揃え + 上に配置
         }}
+        onMouseEnter={() => setShowPopup(true)}
+        onMouseLeave={handleRecordMarkerLeave}
         >
           {/* 吹き出しの三角形 */}
           <div className={styles.popupArrow}></div>
-          
+
           {/* 画像表示 */}
           {selectedRecord.image && (
             <div className={styles.hoverPopupImageContainer}>
-              <img 
-                src={selectedRecord.image} 
-                alt="記録した画像" 
+              <img
+                src={selectedRecord.image}
+                alt="記録した画像"
                 className={styles.hoverPopupImage}
               />
             </div>
           )}
-          
+
           {/* 日時表示 */}
           <div className={styles.hoverPopupDateTime}>
             {formatDateTime(selectedRecord.timestamp)}
           </div>
-          
+
           {/* コメント表示 */}
           {selectedRecord.comment && (
             <div className={styles.hoverPopupComment}>
               {selectedRecord.comment}
             </div>
           )}
-          
+
           {/* 住所表示 */}
           <div className={styles.hoverPopupAddress}>
             {selectedRecord.address}
+          </div>
+        </div>
+      )}
+
+      {/* 記録詳細モーダル（全画面） */}
+      {showRecordDetail && detailRecord && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            {/* バツボタン */}
+            <button
+              onClick={handleCloseDetail}
+              className={styles.detailCloseButton}
+            >
+              ×
+            </button>
+
+            {/* 画像表示 */}
+            {detailRecord.image && (
+              <div className={styles.imageSection}>
+                <img
+                  src={detailRecord.image}
+                  alt="記録した画像"
+                  className={styles.selectedImage}
+                />
+              </div>
+            )}
+
+            {/* 住所表示 */}
+            <div className={styles.addressSection}>
+              <label className={styles.fieldLabel}>場所</label>
+              <div className={styles.addressDisplay}>{detailRecord.address}</div>
+            </div>
+
+            {/* 日時表示 */}
+            <div className={styles.datetimeSection}>
+              <label className={styles.fieldLabel}>日時</label>
+              <div className={styles.datetimeDisplay}>
+                {formatDateTime(detailRecord.timestamp)}
+              </div>
+            </div>
+
+            {/* コメント表示 */}
+            {detailRecord.comment && (
+              <div className={styles.commentSection}>
+                <label className={styles.fieldLabel}>コメント</label>
+                <div className={styles.commentDisplay}>{detailRecord.comment}</div>
+              </div>
+            )}
           </div>
         </div>
       )}
