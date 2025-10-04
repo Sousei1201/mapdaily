@@ -38,15 +38,8 @@
   text-decoration: none;
 }
 
-.nav a:hover {
-  background-color: rgba(130, 174, 70, 0.1);
-}
-
-.currentPage {
-  padding: 33px 20px;
-  color: #82ae46;
-  font-weight: bold;
-  background-color: rgba(130, 174, 70, 0.1);
+.signOutButton {
+  color: #ff6b6b !important;
 }
 
 .title {
@@ -60,6 +53,15 @@
   color: #6d9139;
 }
 
+.pageTitle {
+  color: #82ae46;
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 60px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 /* レスポンシブデザイン - タブレット */
 @media (max-width: 1024px) {
   .title {
@@ -70,6 +72,10 @@
   .currentPage {
     padding: 25px 15px;
     font-size: 14px;
+  }
+
+  .pageTitle {
+    font-size: 1.8em;
   }
 }
 
@@ -99,6 +105,7 @@
 
   .pageTitle {
     font-size: 1.5em;
+    margin-top: 0px; 
     margin-bottom: 20px;
   }
 
@@ -312,15 +319,6 @@
 
 .loginButton:hover {
   background-color: #6d9139;
-}
-
-
-.pageTitle {
-  color: #82ae46;
-  font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-align: center;
 }
 
 .recordsList {

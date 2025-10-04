@@ -21,10 +21,20 @@ interface RecordData {
 }
 
 export default function RecordsPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [records, setRecords] = useState<RecordData[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<RecordData | null>(null);
   const [showDetail, setShowDetail] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      alert('ログアウトしました');
+    } catch (error) {
+      console.error('ログアウトエラー:', error);
+      alert('ログアウトに失敗しました');
+    }
+  };
 
   // Firestoreから記録を取得
   useEffect(() => {
@@ -114,7 +124,9 @@ export default function RecordsPage() {
           </Link>
           <nav className={styles.nav}>
             <Link href="/">マップ</Link>
-            <span className={styles.currentPage}>きろく一覧</span>
+            <a onClick={handleSignOut} className={styles.signOutButton}>
+              ログアウト
+            </a>
           </nav>
         </div>
       </header>

@@ -118,10 +118,6 @@
   color: #ff6b6b !important;
 }
 
-.signOutButton:hover {
-  background-color: rgba(255, 107, 107, 0.1);
-}
-
 .loginRequired {
   display: flex;
   justify-content: center;
