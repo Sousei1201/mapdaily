@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 import styles from './LoginModal.module.css';
 
 interface LoginModalProps {
@@ -10,8 +12,10 @@ interface LoginModalProps {
 
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
@@ -55,11 +59,37 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      alert('パスワード再設定用のメールを送信しました。メールをご確認ください。');
+      setShowPasswordReset(false);
+      setResetEmail('');
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      if (error.code === 'auth/user-not-found') {
+        setError('このメールアドレスは登録されていません');
+      } else if (error.code === 'auth/invalid-email') {
+        setError('メールアドレスの形式が正しくありません');
+      } else {
+        setError('エラーが発生しました。もう一度お試しください。');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const resetForm = () => {
     setEmail('');
     setPassword('');
+    setResetEmail('');
     setError('');
     setIsSignUp(false);
+    setShowPasswordReset(false);
   };
 
   const handleClose = () => {
@@ -69,13 +99,64 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  // パスワードリセットモーダル
+  if (showPasswordReset) {
+    return (
+      <div className={styles.modalOverlay}>
+        <div className={styles.modalContent}>
+          <button onClick={() => setShowPasswordReset(false)} className={styles.closeButton}>
+            ×
+          </button>
+
+          <h2 className={styles.title}>パスワードの再設定</h2>
+
+          <form onSubmit={handlePasswordReset} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>メールアドレス</label>
+              <input
+                type="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                className={styles.input}
+                placeholder="登録済みのメールアドレスを入力"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            {error && <div className={styles.error}>{error}</div>}
+
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
+              {loading ? '送信中...' : '再設定メールを送信'}
+            </button>
+          </form>
+
+          <div className={styles.switchMode}>
+            <button
+              onClick={() => setShowPasswordReset(false)}
+              className={styles.linkButton}
+              disabled={loading}
+            >
+              ログイン画面に戻る
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 通常のログイン/サインアップモーダル
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <button onClick={handleClose} className={styles.closeButton}>
           ×
         </button>
-        
+
         <h2 className={styles.title}>
           {isSignUp ? 'アカウント作成' : 'ログイン'}
         </h2>
@@ -108,8 +189,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
           {error && <div className={styles.error}>{error}</div>}
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.submitButton}
             disabled={loading}
           >
@@ -117,12 +198,24 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           </button>
         </form>
 
+        {!isSignUp && (
+          <div className={styles.forgotPassword}>
+            <button
+              onClick={() => setShowPasswordReset(true)}
+              className={styles.forgotPasswordLink}
+              disabled={loading}
+            >
+              パスワードをお忘れですか？
+            </button>
+          </div>
+        )}
+
         <div className={styles.switchMode}>
           {isSignUp ? (
             <p>
               アカウントをお持ちですか？
-              <button 
-                onClick={() => setIsSignUp(false)} 
+              <button
+                onClick={() => setIsSignUp(false)}
                 className={styles.linkButton}
                 disabled={loading}
               >
@@ -132,8 +225,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           ) : (
             <p>
               アカウントをお持ちでありませんか？
-              <button 
-                onClick={() => setIsSignUp(true)} 
+              <button
+                onClick={() => setIsSignUp(true)}
                 className={styles.linkButton}
                 disabled={loading}
               >

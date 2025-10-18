@@ -147,3 +147,29 @@
   cursor: not-allowed;
   text-decoration: none;
 }
+
+.forgotPassword {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: #82ae46;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+  padding: 5px 0;
+}
+
+.forgotPasswordLink:hover:not(:disabled) {
+  text-decoration: underline;
+  color: #6d9139;
+}
+
+.forgotPasswordLink:disabled {
+  color: #a0a0a0;
+  cursor: not-allowed;
+}

@@ -1,17 +1,25 @@
 
 "use client";
-import React, { useState }  from "react";
+import React, { useState, useEffect }  from "react";
+import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import {MapContent} from "./components/map/Googlemap";
-import { APIProvider } from "@vis.gl/react-google-maps";    
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { useAuth } from "@/app/hooks/useAuth";
 import { LoginModal } from "@/app/components/auth/LoginModal";
 import Link from "next/link";
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [showHowToUse, setShowHowToUse] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { user, loading, signOut } = useAuth();
+
+  useEffect(() => {
+    if (searchParams.get('openLogin') === 'true') {
+      setShowLoginModal(true);
+    }
+  }, [searchParams]);
 
   const handleSignOut = async () => {
     try {

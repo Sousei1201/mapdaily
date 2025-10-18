@@ -7,7 +7,7 @@ import RecordIcon from './plus-solid.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { storage, db } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, onSnapshot, query, where, orderBy, doc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import PawIcon from './paw-solid.svg';
 
 
@@ -55,6 +55,12 @@ export const MapContent = () => {
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const [showRecordDetail, setShowRecordDetail] = useState(false);
   const [detailRecord, setDetailRecord] = useState<RecordData | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editComment, setEditComment] = useState('');
+  const [editImage, setEditImage] = useState<string | null>(null);
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [showConfirmCancelEdit, setShowConfirmCancelEdit] = useState(false);
+  const [showConfirmDeleteRecord, setShowConfirmDeleteRecord] = useState(false);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
   
@@ -302,14 +308,16 @@ export const MapContent = () => {
   };
 
   // 肉球ピンホバーの処理
-  const handleRecordMarkerHover = (record : RecordData, event: React.MouseEvent) => {
+  const handleRecordMarkerHover = (record : RecordData, event: any) => {
     // タッチデバイス（スマホ・タブレット）ではホバー処理をスキップ
     if (isTouchDevice()) {
       return;
     }
 
     // ピンの中央座標を取得
-    const target = event.currentTarget as HTMLElement;
+    const target = event.domEvent?.target || event.currentTarget;
+    if (!target) return;
+
     const rect = target.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -334,8 +342,114 @@ export const MapContent = () => {
 
   // 詳細画面を閉じる処理
   const handleCloseDetail = () => {
+    if (isEditMode) {
+      setShowConfirmCancelEdit(true);
+    } else {
+      setShowRecordDetail(false);
+      setDetailRecord(null);
+    }
+  };
+
+  // 編集モードに入る
+  const handleStartEdit = () => {
+    if (detailRecord) {
+      setEditComment(detailRecord.comment);
+      setEditImage(detailRecord.image);
+      setEditImageFile(null);
+      setIsEditMode(true);
+    }
+  };
+
+  // 編集をキャンセル
+  const handleCancelEdit = () => {
+    setShowConfirmCancelEdit(false);
+    setIsEditMode(false);
     setShowRecordDetail(false);
     setDetailRecord(null);
+    setEditComment('');
+    setEditImage(null);
+    setEditImageFile(null);
+  };
+
+  // 編集キャンセルを取り消し
+  const handleKeepEditing = () => {
+    setShowConfirmCancelEdit(false);
+  };
+
+  // 編集画像の変更
+  const handleEditImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setEditImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setEditImage(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 記録を更新
+  const handleUpdateRecord = async () => {
+    if (!detailRecord || !user) return;
+
+    setUploading(true);
+
+    try {
+      let imageURL = editImage;
+
+      // 新しい画像がある場合はアップロード
+      if (editImageFile) {
+        imageURL = await uploadImageToStorage(editImageFile, user.uid);
+      }
+
+      const recordRef = doc(db, 'travel-records', detailRecord.id);
+      await updateDoc(recordRef, {
+        comment: editComment,
+        image: imageURL
+      });
+      alert('記録を更新しました');
+      setIsEditMode(false);
+      setShowRecordDetail(false);
+      setDetailRecord(null);
+      setEditComment('');
+      setEditImage(null);
+      setEditImageFile(null);
+    } catch (error) {
+      console.error('更新エラー:', error);
+      alert('記録の更新に失敗しました');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // 削除確認ダイアログを表示
+  const handleShowDeleteConfirm = () => {
+    setShowConfirmDeleteRecord(true);
+  };
+
+  // 削除をキャンセル
+  const handleCancelDelete = () => {
+    setShowConfirmDeleteRecord(false);
+  };
+
+  // 記録を削除
+  const handleDeleteRecord = async () => {
+    if (!detailRecord) return;
+
+    try {
+      const recordRef = doc(db, 'travel-records', detailRecord.id);
+      await deleteDoc(recordRef);
+      alert('記録を削除しました');
+      setShowConfirmDeleteRecord(false);
+      setIsEditMode(false);
+      setShowRecordDetail(false);
+      setDetailRecord(null);
+      setEditComment('');
+    } catch (error) {
+      console.error('削除エラー:', error);
+      alert('記録の削除に失敗しました');
+    }
   };
 
     // --- 日時フォーマット ---
@@ -590,8 +704,8 @@ export const MapContent = () => {
 
       {/* 記録詳細モーダル（全画面） */}
       {showRecordDetail && detailRecord && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
+        <div className={styles.detailModalOverlay}>
+          <div className={styles.detailModalContent}>
             {/* バツボタン */}
             <button
               onClick={handleCloseDetail}
@@ -600,38 +714,129 @@ export const MapContent = () => {
               ×
             </button>
 
-            {/* 画像表示 */}
-            {detailRecord.image && (
-              <div className={styles.imageSection}>
-                <img
-                  src={detailRecord.image}
-                  alt="記録した画像"
-                  className={styles.selectedImage}
+            {/* 画像表示・編集 */}
+            {isEditMode ? (
+              <div className={styles.detailImageSection}>
+                <label htmlFor="edit-image-upload" className={styles.imageUploadLabel}>
+                  {editImage ? (
+                    <img src={editImage} alt="選択された画像" className={styles.detailSelectedImage} />
+                  ) : (
+                    <div className={styles.imagePlaceholder}>
+                      <span>画像を選択</span>
+                    </div>
+                  )}
+                </label>
+                <input
+                  id="edit-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleEditImageChange}
+                  className={styles.hiddenInput}
+                  disabled={uploading}
                 />
               </div>
+            ) : (
+              detailRecord.image && (
+                <div className={styles.detailImageSection}>
+                  <img
+                    src={detailRecord.image}
+                    alt="記録した画像"
+                    className={styles.detailSelectedImage}
+                  />
+                </div>
+              )
             )}
 
             {/* 住所表示 */}
-            <div className={styles.addressSection}>
-              <label className={styles.fieldLabel}>場所</label>
-              <div className={styles.addressDisplay}>{detailRecord.address}</div>
+            <div className={styles.detailAddressSection}>
+              <label className={styles.detailFieldLabel}>場所</label>
+              <div className={styles.detailAddressDisplay}>{detailRecord.address}</div>
             </div>
 
             {/* 日時表示 */}
-            <div className={styles.datetimeSection}>
-              <label className={styles.fieldLabel}>日時</label>
-              <div className={styles.datetimeDisplay}>
+            <div className={styles.detailDatetimeSection}>
+              <label className={styles.detailFieldLabel}>日時</label>
+              <div className={styles.detailDatetimeDisplay}>
                 {formatDateTime(detailRecord.timestamp)}
               </div>
             </div>
 
-            {/* コメント表示 */}
-            {detailRecord.comment && (
-              <div className={styles.commentSection}>
-                <label className={styles.fieldLabel}>コメント</label>
-                <div className={styles.commentDisplay}>{detailRecord.comment}</div>
+            {/* コメント表示・編集 */}
+            <div className={styles.detailCommentSection}>
+              <label className={styles.detailFieldLabel}>コメント</label>
+              {isEditMode ? (
+                <textarea
+                  value={editComment}
+                  onChange={(e) => setEditComment(e.target.value)}
+                  className={styles.detailCommentInput}
+                  placeholder="コメントを入力してください"
+                  rows={4}
+                  disabled={uploading}
+                />
+              ) : (
+                <div className={styles.detailCommentDisplay}>{detailRecord.comment || 'コメントなし'}</div>
+              )}
+            </div>
+
+            {/* ボタンエリア */}
+            {isEditMode ? (
+              <div className={styles.detailButtonContainer}>
+                <button
+                  onClick={handleUpdateRecord}
+                  className={styles.detailSaveButton}
+                  disabled={uploading}
+                >
+                  {uploading ? '保存中...' : '保存'}
+                </button>
+                <button
+                  onClick={handleShowDeleteConfirm}
+                  className={styles.detailDeleteButton}
+                  disabled={uploading}
+                >
+                  削除
+                </button>
+              </div>
+            ) : (
+              <div className={styles.detailButtonContainer}>
+                <button onClick={handleStartEdit} className={styles.detailEditButton}>
+                  編集・削除
+                </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 編集キャンセル確認ダイアログ */}
+      {showConfirmCancelEdit && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmDialog}>
+            <p className={styles.confirmMessage}>記録の編集をやめますか？</p>
+            <div className={styles.confirmButtons}>
+              <button onClick={handleCancelEdit} className={styles.confirmYes}>
+                はい
+              </button>
+              <button onClick={handleKeepEditing} className={styles.confirmNo}>
+                いいえ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 削除確認ダイアログ */}
+      {showConfirmDeleteRecord && (
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmDialog}>
+            <p className={styles.confirmMessage}>この記録を削除しますか？</p>
+            <div className={styles.confirmButtons}>
+              <button onClick={handleDeleteRecord} className={styles.confirmYes}>
+                はい
+              </button>
+              <button onClick={handleCancelDelete} className={styles.confirmNo}>
+                いいえ
+              </button>
+            </div>
           </div>
         </div>
       )}
