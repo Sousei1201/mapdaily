@@ -1,12 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import styles from './page.module.css';
 import Link from 'next/link';
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [newPassword, setNewPassword] = useState('');
@@ -63,13 +63,14 @@ export default function ResetPasswordPage() {
       await confirmPasswordReset(auth, oobCode, newPassword);
       alert('パスワードを再設定しました！ログインしてください。');
       router.push('/?openLogin=true');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Password reset error:', error);
-      if (error.code === 'auth/weak-password') {
+      const errorCode = (error as { code?: string })?.code;
+      if (errorCode === 'auth/weak-password') {
         setError('パスワードは6文字以上で入力してください');
-      } else if (error.code === 'auth/expired-action-code') {
+      } else if (errorCode === 'auth/expired-action-code') {
         setError('リンクの有効期限が切れています');
-      } else if (error.code === 'auth/invalid-action-code') {
+      } else if (errorCode === 'auth/invalid-action-code') {
         setError('無効なリンクです');
       } else {
         setError('エラーが発生しました。もう一度お試しください。');
@@ -172,5 +173,17 @@ export default function ResetPasswordPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.loadingContainer}>
+        <div className={styles.loading}>読み込み中...</div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

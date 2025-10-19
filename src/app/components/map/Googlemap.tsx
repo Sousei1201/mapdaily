@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, useRef, use } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from "./Googlemap.module.css";
 import { APIProvider, Map, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
 import NavigationIcon from './paper-plane-solid.svg';
@@ -7,7 +7,7 @@ import RecordIcon from './plus-solid.svg';
 import { useAuth } from '../../hooks/useAuth';
 import { storage, db } from '../../lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, onSnapshot, query, where, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, where, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import PawIcon from './paw-solid.svg';
 
 
@@ -134,12 +134,12 @@ export const MapContent = () => {
 
 
   // 住所を取得する関数
-  const getCurrentAddress = async (lat, lng) => {
+  const getCurrentAddress = async (lat: number, lng: number): Promise<string> => {
     try {
       const geocoder = new google.maps.Geocoder();
-      const response = await new Promise((resolve, reject) => {
+      const response = await new Promise<string>((resolve, reject) => {
         geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-          if (status === 'OK' && results[0]) {
+          if (status === 'OK' && results && results[0]) {
             resolve(results[0].formatted_address);
           } else {
             reject('住所を取得できませんでした');
@@ -162,20 +162,22 @@ export const MapContent = () => {
   };
 
   // 画像選択の処理 (修正: File オブジェクトも保存)
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file); // File オブジェクトを保存
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target.result);
+        if (e.target?.result) {
+          setSelectedImage(e.target.result as string);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
   // 画像をFirebase Storageにアップロードする関数
-  const uploadImageToStorage = async (file, userId) => {
+  const uploadImageToStorage = async (file: File, userId: string): Promise<string> => {
     try {
       // ファイル名を生成 (タイムスタンプ + 元のファイル名)
       const timestamp = new Date().getTime();
@@ -231,12 +233,12 @@ export const MapContent = () => {
       //   timestamp: new Date().toISOString(),
       //   createdAt: new Date()
       // };
-      const saveRecordToFirestore = async (recordData) => {
+      const saveRecordToFirestore = async (recordData: Omit<RecordData, 'id'>) => {
         const docRef = await addDoc(collection(db, `travel-records`), recordData);
         return docRef.id;
       };
 
-      const newRecord: RecordData = {
+      const newRecordData: Omit<RecordData, 'id'> = {
         userId: user.uid,
         location: {
           lat: center.lat,
@@ -250,9 +252,14 @@ export const MapContent = () => {
 
       };
 
-      
 
-      const newId = await saveRecordToFirestore(newRecord);
+
+      const newId = await saveRecordToFirestore(newRecordData);
+
+      const newRecord: RecordData = {
+        ...newRecordData,
+        id: newId
+      };
     
 
       // id を埋めてから state に追加すると key 重複が防げる
@@ -272,11 +279,13 @@ export const MapContent = () => {
 
     } catch (error) {
       console.error('保存処理エラー:', error);
-      
+
       // エラーメッセージをより詳細に
-      if (error.code === 'storage/unauthorized') {
-        alert('画像のアップロード権限がありません。ログインを確認してください。\nユーザーID: ${user?.uid}\nエラー: ${error.message}');
-      } else if (error.code === 'permission-denied') {
+      const errorCode = (error as { code?: string })?.code;
+      const errorMessage = (error as { message?: string })?.message;
+      if (errorCode === 'storage/unauthorized') {
+        alert(`画像のアップロード権限がありません。ログインを確認してください。\nユーザーID: ${user?.uid}\nエラー: ${errorMessage}`);
+      } else if (errorCode === 'permission-denied') {
         alert('データベースへの書き込み権限がありません。');
       } else {
         alert('保存に失敗しました。もう一度お試しください。');
@@ -308,14 +317,14 @@ export const MapContent = () => {
   };
 
   // 肉球ピンホバーの処理
-  const handleRecordMarkerHover = (record : RecordData, event: any) => {
+  const handleRecordMarkerHover = (record : RecordData, event: { domEvent?: Event }) => {
     // タッチデバイス（スマホ・タブレット）ではホバー処理をスキップ
     if (isTouchDevice()) {
       return;
     }
 
     // ピンの中央座標を取得
-    const target = event.domEvent?.target || event.currentTarget;
+    const target = event.domEvent?.target as HTMLElement;
     if (!target) return;
 
     const rect = target.getBoundingClientRect();
@@ -534,7 +543,6 @@ export const MapContent = () => {
             defaultZoom={15}
             disableDefaultUI={true}
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
-            ref={mapRef}
           >
          {/* 現在地マーカー */}
           <AdvancedMarker position={center}>
@@ -547,7 +555,7 @@ export const MapContent = () => {
               key={`${record.id}-${record.location.lat}-${record.location.lng}`}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
-              onMouseEnter={(e) => handleRecordMarkerHover(record, e)}
+              onMouseEnter={(e) => handleRecordMarkerHover(record, e as { domEvent?: Event })}
               onMouseLeave={handleRecordMarkerLeave}
 
             >

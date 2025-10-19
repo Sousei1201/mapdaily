@@ -35,19 +35,20 @@ export default function LoginPage() {
       }
       resetForm();
       router.push('/');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Authentication error:', error);
-      if (error.code === 'auth/user-not-found') {
+      const errorCode = (error as { code?: string })?.code;
+      if (errorCode === 'auth/user-not-found') {
         setError('ユーザーが見つかりません');
-      } else if (error.code === 'auth/invalid-credential') {
+      } else if (errorCode === 'auth/invalid-credential') {
         setError('メールアドレスまたはパスワードが間違っています');
-      } else if (error.code === 'auth/wrong-password') {
+      } else if (errorCode === 'auth/wrong-password') {
         setError('パスワードが間違っています');
-      } else if (error.code === 'auth/email-already-in-use') {
+      } else if (errorCode === 'auth/email-already-in-use') {
         setError('このメールアドレスは既に使用されています');
-      } else if (error.code === 'auth/weak-password') {
+      } else if (errorCode === 'auth/weak-password') {
         setError('パスワードは6文字以上で入力してください');
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (errorCode === 'auth/invalid-email') {
         setError('メールアドレスの形式が正しくありません');
       } else {
         setError('エラーが発生しました。もう一度お試しください。');
@@ -67,11 +68,12 @@ export default function LoginPage() {
       alert('パスワード再設定用のメールを送信しました。メールをご確認ください。');
       setShowPasswordReset(false);
       setResetEmail('');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Password reset error:', error);
-      if (error.code === 'auth/user-not-found') {
+      const errorCode = (error as { code?: string })?.code;
+      if (errorCode === 'auth/user-not-found') {
         setError('このメールアドレスは登録されていません');
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (errorCode === 'auth/invalid-email') {
         setError('メールアドレスの形式が正しくありません');
       } else {
         setError('エラーが発生しました。もう一度お試しください。');
@@ -89,10 +91,6 @@ export default function LoginPage() {
     setIsSignUp(false);
     setShowPasswordReset(false);
     setShowLoginModal(false);
-  };
-
-  const handleClose = () => {
-    resetForm();
   };
 
   return (

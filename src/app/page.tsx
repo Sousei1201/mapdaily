@@ -4,7 +4,6 @@ import React, { useState, useEffect }  from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import {MapContent} from "./components/map/Googlemap";
-import { APIProvider } from "@vis.gl/react-google-maps";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
 
