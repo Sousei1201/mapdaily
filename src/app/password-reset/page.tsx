@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
     return (
       <div className={styles.page}>
         <div className={styles.loadingContainer}>
-          <div className={styles.loading}>確認中...</div>
+          <div className={styles.loading}>読み込み中...</div>
         </div>
       </div>
     );

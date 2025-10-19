@@ -18,7 +18,7 @@
 
 .headertext {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   cursor: pointer;
   height: 100%;
@@ -114,7 +114,8 @@
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 30px;
-  text-align: center;
+  text-align: left
+  ;
 }
 
 .form {
