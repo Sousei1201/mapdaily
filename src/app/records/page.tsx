@@ -62,9 +62,15 @@ export default function RecordsPage() {
           createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
         } as RecordData;
       });
+
+      // 重複を除去（同じIDのレコードが複数ある場合は最初の1つだけ残す）
+      const uniqueData = data.filter((record, index, self) =>
+        index === self.findIndex((r) => r.id === record.id)
+      );
+
       // クライアント側で並び替え
-      data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      setRecords(data);
+      uniqueData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      setRecords(uniqueData);
     });
 
     return () => unsubscribe();

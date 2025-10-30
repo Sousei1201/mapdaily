@@ -1,9 +1,9 @@
 .currentwarp{
   position: absolute;
-  bottom: 90px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  bottom: clamp(67px, 10vh, 90px);
+  right: clamp(12px, 2vw, 20px);
+  width: clamp(45px, 6vw, 60px);
+  height: clamp(45px, 6vh, 60px);
   background-color: #d9cf8d;
   border: none;
   border-radius: 50%;
@@ -16,17 +16,17 @@
 }
 
 .navIcon {
-  width: 24px;
-  height: 24px;
-  fill: #ffec47; 
+  width: clamp(18px, 2.5vw, 24px);
+  height: clamp(18px, 2.5vh, 24px);
+  fill: #ffec47;
 }
 
 .recordmenu {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  bottom: clamp(12px, 2vh, 20px);
+  right: clamp(12px, 2vw, 20px);
+  width: clamp(45px, 6vw, 60px);
+  height: clamp(45px, 6vh, 60px);
   background-color: #d9cf8d;
   border: none;
   border-radius: 50%;
@@ -39,8 +39,8 @@
 }
 
 .plusIcon {
-  width: 24px;
-  height: 24px;
+  width: clamp(18px, 2.5vw, 24px);
+  height: clamp(18px, 2.5vh, 24px);
   fill: #ffec47;
 }
 
@@ -82,12 +82,11 @@
 
 .modalContent {
   background-color: rgb(217, 205, 163);
-  top:-10px;
-  width: 90%;
-  max-width: 500px;
+  top: clamp(-15px, -1.5vh, -10px);
+  width: clamp(280px, 90vw, 500px);
   max-height: 80vh;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: clamp(10px, 1.5vw, 15px);
+  padding: clamp(15px, 2.5vw, 20px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   overflow-y: auto;
   position: relative;
@@ -95,15 +94,15 @@
 
 /* 画像セクション */
 .imageSection {
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
 .imageUploadLabel {
   display: block;
   width: 100%;
-  height: 200px;
+  height: clamp(150px, 20vh, 200px);
   border: 2px dashed #ffffff;
-  border-radius: 10px;
+  border-radius: clamp(8px, 1vw, 10px);
   cursor: pointer;
   overflow: hidden;
 }
@@ -115,7 +114,7 @@
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-size: 16px;
+  font-size: clamp(14px, 1.8vw, 16px);
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -134,48 +133,50 @@
   display: block;
   color: #ffffff;
   font-weight: bold;
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin-bottom: clamp(6px, 0.8vh, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
 }
 
 /* 住所セクション */
 .addressSection {
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
 .addressDisplay {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 12px;
-  border-radius: 8px;
+  padding: clamp(10px, 1.2vh, 12px);
+  border-radius: clamp(6px, 0.8vw, 8px);
   color: #333;
   min-height: 20px;
+  font-size: clamp(13px, 1.6vw, 14px);
 }
 
 /* 日時セクション */
 .datetimeSection {
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
 .datetimeDisplay {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 12px;
-  border-radius: 8px;
+  padding: clamp(10px, 1.2vh, 12px);
+  border-radius: clamp(6px, 0.8vw, 8px);
   color: #333;
+  font-size: clamp(13px, 1.6vw, 14px);
 }
 
 /* コメントセクション */
 .commentSection {
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
 .commentInput {
   width: 100%;
-  height: 100px;
-  padding: 12px;
+  height: clamp(80px, 12vh, 100px);
+  padding: clamp(10px, 1.2vh, 12px);
   border: none;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   resize: vertical;
-  font-size: 14px;
+  font-size: clamp(13px, 1.6vw, 14px);
   font-family: inherit;
   box-sizing: border-box;
 }
@@ -187,19 +188,21 @@
 /* 保存ボタン */
 .saveButton {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 1.5vh, 15px);
   background-color: #d9cf8d;
   color: #82ae46;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
-.saveButton:hover:not(:disabled) {
-  background-color: #c7bc73;
+@media (hover: hover) {
+  .saveButton:hover:not(:disabled) {
+    background-color: #c7bc73;
+  }
 }
 
 .saveButton:disabled {
@@ -210,17 +213,17 @@
 
 /* キャンセルボタン */
 .cancelButton {
-  position:fixed;
-  bottom: 10px;
+  position: fixed;
+  bottom: clamp(8px, 1vh, 10px);
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
+  width: clamp(50px, 6vw, 60px);
+  height: clamp(50px, 6vh, 60px);
   background-color: #ff4444;
   border: none;
   border-radius: 50%;
   color: white;
-  font-size: 24px;
+  font-size: clamp(20px, 2.5vw, 24px);
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -229,8 +232,10 @@
   justify-content: center;
 }
 
-.cancelButton:hover {
-  background-color: #ff2222;
+@media (hover: hover) {
+  .cancelButton:hover {
+    background-color: #ff2222;
+  }
 }
 
 /* 確認ダイアログ */
@@ -249,32 +254,32 @@
 
 .dialogContent {
   background-color: #d9cf8d;
-  padding: 30px;
-  border-radius: 15px;
+  padding: clamp(20px, 3vh, 30px);
+  border-radius: clamp(12px, 1.5vw, 15px);
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: 300px;
+  min-width: clamp(250px, 80vw, 300px);
 }
 
 .dialogMessage {
-  margin-bottom: 20px;
-  font-size: 18px;
+  margin-bottom: clamp(15px, 2vh, 20px);
+  font-size: clamp(16px, 2vw, 18px);
   color: #333;
 }
 
 .dialogButtons {
   display: flex;
-  gap: 15px;
+  gap: clamp(10px, 1.5vw, 15px);
   justify-content: center;
 }
 
 .dialogYes, .dialogNo {
-  padding: 10px 20px;
+  padding: clamp(8px, 1vh, 10px) clamp(16px, 2vw, 20px);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   cursor: pointer;
-  min-width: 80px;
+  min-width: clamp(70px, 10vw, 80px);
 }
 
 .dialogYes {
@@ -282,8 +287,10 @@
   color: white;
 }
 
-.dialogYes:hover {
-  background-color: #ff2222;
+@media (hover: hover) {
+  .dialogYes:hover {
+    background-color: #ff2222;
+  }
 }
 
 .dialogNo {
@@ -291,8 +298,10 @@
   color: white;
 }
 
-.dialogNo:hover {
-  background-color: #26b1ed;
+@media (hover: hover) {
+  .dialogNo:hover {
+    background-color: #26b1ed;
+  }
 }
 
 .loadingContainer {
@@ -335,10 +344,10 @@
 .hoverPopup {
   position: fixed;
   background-color: rgb(217, 207, 141);
-  width: 250px;
+  width: clamp(180px, 80vw, 250px);
   max-width: 90vw;
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: clamp(10px, 1.2vw, 12px);
+  padding: clamp(10px, 1.2vw, 12px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   z-index: 1100;
   pointer-events: auto;
@@ -359,42 +368,42 @@
 
 .hoverPopupImageContainer {
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: clamp(6px, 0.8vh, 8px);
 }
 
 .hoverPopupImage {
   width: 100%;
-  height: 120px;
+  height: clamp(80px, 12vh, 120px);
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
 }
 
 .hoverPopupDateTime {
-  font-size: 12px;
+  font-size: clamp(11px, 1.4vw, 12px);
   color: #82ae46;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: clamp(5px, 0.6vh, 6px);
 }
 
 .hoverPopupComment {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px;
-  border-radius: 6px;
+  padding: clamp(6px, 0.8vw, 8px);
+  border-radius: clamp(5px, 0.6vw, 6px);
   color: #333;
-  margin-bottom: 6px;
-  font-size: 13px;
+  margin-bottom: clamp(5px, 0.6vh, 6px);
+  font-size: clamp(12px, 1.5vw, 13px);
   white-space: pre-wrap;
   word-wrap: break-word;
-  max-height: 60px;
+  max-height: clamp(50px, 8vh, 60px);
   overflow-y: auto;
 }
 
 .hoverPopupAddress {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px;
-  border-radius: 6px;
+  padding: clamp(6px, 0.8vw, 8px);
+  border-radius: clamp(5px, 0.6vw, 6px);
   color: #666;
-  font-size: 12px;
+  font-size: clamp(11px, 1.4vw, 12px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -415,12 +424,12 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 40px;
-  height: 40px;
+  width: clamp(32px, 4vw, 40px);
+  height: clamp(32px, 4vh, 40px);
   background-color: transparent;
   border: none;
   color: #ffffff;
-  font-size: 36px;
+  font-size: clamp(28px, 4vw, 36px);
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -430,147 +439,30 @@
   line-height: 1;
 }
 
-.detailCloseButton:hover {
-  color: #ff4444;
+@media (hover: hover) {
+  .detailCloseButton:hover {
+    color: #ff4444;
+  }
 }
 
 /* コメント表示エリア（編集不可） */
 .commentDisplay {
   background-color: rgba(255, 255, 255, 0.9);
-  padding: 12px;
-  border-radius: 8px;
+  padding: clamp(10px, 1.2vh, 12px);
+  border-radius: clamp(6px, 0.8vw, 8px);
   color: #333;
-  min-height: 100px;
+  min-height: clamp(80px, 12vh, 100px);
   white-space: pre-wrap;
   word-wrap: break-word;
+  font-size: clamp(13px, 1.6vw, 14px);
 }
 
-/* レスポンシブデザイン - タブレット */
-@media (max-width: 1024px) {
-  .modalContent {
-    width: 85%;
-    padding: 18px;
-  }
-
-  .recordmenu, .currentwarp {
-    width: 55px;
-    height: 55px;
-  }
-
-  .navIcon, .plusIcon {
-    width: 22px;
-    height: 22px;
-  }
-}
-
-/* レスポンシブデザイン - スマートフォン */
-@media (max-width: 768px) {
-  .modalContent {
-    width: 95%;
-    padding: 15px;
-    max-height: 85vh;
-  }
-
-  .recordmenu {
-    width: 50px;
-    height: 50px;
-    bottom: 15px;
-    right: 15px;
-  }
-
-  .currentwarp {
-    width: 50px;
-    height: 50px;
-    bottom: 75px;
-    right: 15px;
-  }
-
-  .navIcon, .plusIcon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .fieldLabel {
-    font-size: 14px;
-  }
-
-  .imageUploadLabel {
-    height: 150px;
-  }
-
-  .hoverPopup {
-    width: 200px;
-    padding: 10px;
-  }
-
-  .hoverPopupImage {
-    height: 100px;
-  }
-}
-
-/* レスポンシブデザイン - 小型スマートフォン */
-@media (max-width: 480px) {
-  .modalContent {
-    width: 95%;
-    padding: 12px;
-  }
-
-  .recordmenu {
-    width: 45px;
-    height: 45px;
-    bottom: 12px;
-    right: 12px;
-  }
-
-  .currentwarp {
-    width: 45px;
-    height: 45px;
-    bottom: 67px;
-    right: 12px;
-  }
-
-  .navIcon, .plusIcon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .fieldLabel {
-    font-size: 13px;
-  }
-
-  .commentInput {
-    height: 80px;
-    font-size: 13px;
-  }
-
-  .saveButton {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .hoverPopup {
-    width: 180px;
-    padding: 8px;
-  }
-
-  .hoverPopupImage {
-    height: 80px;
-  }
-
-  .hoverPopupDateTime {
-    font-size: 11px;
-  }
-
-  .hoverPopupComment, .hoverPopupAddress {
-    font-size: 11px;
-  }
-}
 
 /* 編集・削除ボタン用のスタイル */
 .buttonContainer {
   display: flex;
-  gap: 15px;
-  margin-top: 25px;
+  gap: clamp(10px, 1.5vw, 15px);
+  margin-top: clamp(20px, 2.5vh, 25px);
   justify-content: center;
 }
 
@@ -579,16 +471,18 @@
   background-color: #82ae46;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.editButton:hover {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .editButton:hover {
+    background-color: #6d9139;
+  }
 }
 
 .deleteButton {
@@ -596,16 +490,18 @@
   background-color: #ff6b6b;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.deleteButton:hover {
-  background-color: #e85555;
+@media (hover: hover) {
+  .deleteButton:hover {
+    background-color: #e85555;
+  }
 }
 
 .confirmOverlay {
@@ -623,37 +519,37 @@
 
 .confirmDialog {
   background-color: #d9cf8d;
-  border-radius: 15px;
-  padding: 30px;
+  border-radius: clamp(12px, 1.5vw, 15px);
+  padding: clamp(20px, 3vh, 30px);
   max-width: 400px;
-  width: 90%;
+  width: clamp(280px, 90vw, 400px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .confirmMessage {
   color: #82ae46;
-  font-size: 18px;
+  font-size: clamp(16px, 2vw, 18px);
   font-weight: bold;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: clamp(20px, 2.5vh, 25px);
 }
 
 .confirmButtons {
   display: flex;
-  gap: 15px;
+  gap: clamp(10px, 1.5vw, 15px);
   justify-content: center;
 }
 
 .confirmYes,
 .confirmNo {
-  padding: 12px 30px;
+  padding: clamp(10px, 1.2vh, 12px) clamp(24px, 3vw, 30px);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
-  min-width: 100px;
+  min-width: clamp(80px, 10vw, 100px);
 }
 
 .confirmYes {
@@ -661,8 +557,10 @@
   color: white;
 }
 
-.confirmYes:hover {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .confirmYes:hover {
+    background-color: #6d9139;
+  }
 }
 
 .confirmNo {
@@ -670,8 +568,10 @@
   color: white;
 }
 
-.confirmNo:hover {
-  background-color: #777;
+@media (hover: hover) {
+  .confirmNo:hover {
+    background-color: #777;
+  }
 }
 
 /* 詳細モーダル（records画面風のスタイル） */
@@ -690,10 +590,9 @@
 
 .detailModalContent {
   background-color: #d9cf8d;
-  border-radius: 20px;
-  padding: 30px;
-  width: 90%;
-  max-width: 600px;
+  border-radius: clamp(15px, 2vw, 20px);
+  padding: clamp(20px, 3vw, 30px);
+  width: clamp(280px, 90vw, 600px);
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -702,8 +601,8 @@
 
 .detailImageSection {
   width: 100%;
-  margin-bottom: 20px;
-  border-radius: 10px;
+  margin-bottom: clamp(15px, 2vh, 20px);
+  border-radius: clamp(8px, 1vw, 10px);
   overflow: hidden;
   background-color: rgba(130, 174, 70, 0.1);
 }
@@ -718,25 +617,25 @@
 .detailAddressSection,
 .detailDatetimeSection,
 .detailCommentSection {
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 2vh, 20px);
 }
 
 .detailFieldLabel {
   display: block;
   color: #82ae46;
   font-weight: bold;
-  margin-bottom: 8px;
-  font-size: 14px;
+  margin-bottom: clamp(6px, 0.8vh, 8px);
+  font-size: clamp(13px, 1.6vw, 14px);
 }
 
 .detailAddressDisplay,
 .detailDatetimeDisplay,
 .detailCommentDisplay {
   background-color: rgba(242, 242, 176, 0.5);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  padding: clamp(10px, 1.2vh, 12px);
   color: #82ae46;
-  font-size: 16px;
+  font-size: clamp(14px, 1.8vw, 16px);
   line-height: 1.6;
 }
 
@@ -744,14 +643,14 @@
   width: 100%;
   background-color: rgba(242, 242, 176, 0.5);
   border: 2px solid #82ae46;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  padding: clamp(10px, 1.2vh, 12px);
   color: #82ae46;
-  font-size: 16px;
+  font-size: clamp(14px, 1.8vw, 16px);
   line-height: 1.6;
   font-family: inherit;
   resize: vertical;
-  min-height: 100px;
+  min-height: clamp(80px, 12vh, 100px);
 }
 
 .detailCommentInput:focus {
@@ -762,8 +661,8 @@
 
 .detailButtonContainer {
   display: flex;
-  gap: 15px;
-  margin-top: 25px;
+  gap: clamp(10px, 1.5vw, 15px);
+  margin-top: clamp(20px, 2.5vh, 25px);
   justify-content: center;
 }
 
@@ -772,16 +671,18 @@
   background-color: #82ae46;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.detailEditButton:hover {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .detailEditButton:hover {
+    background-color: #6d9139;
+  }
 }
 
 .detailSaveButton {
@@ -789,16 +690,18 @@
   background-color: #82ae46;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.detailSaveButton:hover:not(:disabled) {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .detailSaveButton:hover:not(:disabled) {
+    background-color: #6d9139;
+  }
 }
 
 .detailSaveButton:disabled {
@@ -812,16 +715,18 @@
   background-color: #ff6b6b;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.detailDeleteButton:hover:not(:disabled) {
-  background-color: #e85555;
+@media (hover: hover) {
+  .detailDeleteButton:hover:not(:disabled) {
+    background-color: #e85555;
+  }
 }
 
 .detailDeleteButton:disabled {

@@ -9,7 +9,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 70px;
+  height: clamp(50px, 7vh, 70px);
   z-index: 1000;
   background: #d9cf8d;
   color: #82ae46;
@@ -22,29 +22,31 @@
   align-items: center;
   cursor: pointer;
   height: 100%;
-  padding: 0 20px;
+  padding: 0 clamp(15px, 2vw, 20px);
 }
 
 .title {
-  font-size: 2em;
+  font-size: clamp(1em, 2.5vw, 2em);
   font-weight: bold;
   color: #82ae46;
   text-decoration: none;
 }
 
-.title:hover {
-  color: #6d9139;
+@media (hover: hover) {
+  .title:hover {
+    color: #6d9139;
+  }
 }
 
 .content {
   width: 100%;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - clamp(50px, 7vh, 70px));
   padding: 0;
   background-color: #f2f2b0;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 70px;
+  margin-top: clamp(50px, 7vh, 70px);
 }
 
 .loadingContainer {
@@ -72,75 +74,76 @@
 .errorMessage {
   text-align: center;
   background-color: rgba(217, 205, 163, 0.9);
-  padding: 40px;
-  border-radius: 15px;
+  padding: clamp(25px, 4vh, 40px) clamp(20px, 3vw, 40px);
+  border-radius: clamp(10px, 1.5vw, 15px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .errorMessage h2 {
   color: #ff6b6b;
-  margin-bottom: 20px;
-  font-size: 24px;
+  margin-bottom: clamp(15px, 2vh, 20px);
+  font-size: clamp(18px, 2.5vw, 24px);
 }
 
 .homeButton {
   background-color: #82ae46;
   color: white;
   border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: clamp(12px, 1.5vh, 15px) clamp(24px, 3vw, 30px);
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(14px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
 }
 
-.homeButton:hover {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .homeButton:hover {
+    background-color: #6d9139;
+  }
 }
 
 .formContainer {
   background-color: rgba(217, 205, 163, 0.9);
-  padding: 40px;
-  border-radius: 15px;
+  padding: clamp(25px, 4vh, 40px) clamp(20px, 3vw, 40px);
+  border-radius: clamp(10px, 1.5vw, 15px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   max-width: 500px;
-  width: 90%;
+  width: clamp(280px, 90vw, 500px);
 }
 
 .pageTitle {
   color: #82ae46;
-  font-size: 2em;
+  font-size: clamp(1.3em, 3vw, 2em);
   font-weight: bold;
-  margin-bottom: 30px;
-  text-align: left
-  ;
+  margin-bottom: clamp(20px, 3vh, 30px);
+  text-align: left;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(15px, 2vh, 20px);
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: clamp(6px, 0.8vh, 8px);
 }
 
 .label {
   color: #82ae46;
   font-weight: bold;
-  font-size: 16px;
+  font-size: clamp(13px, 1.8vw, 16px);
 }
 
 .input {
-  padding: 12px;
+  padding: clamp(9px, 1.2vh, 12px);
   border: 2px solid #82ae46;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(13px, 1.8vw, 16px);
   background-color: rgba(242, 242, 176, 0.5);
   color: #82ae46;
 }
@@ -163,131 +166,35 @@
 
 .error {
   color: #ff6b6b;
-  font-size: 15px;
+  font-size: clamp(13px, 1.6vw, 15px);
   text-align: center;
-  padding: 10px;
+  padding: clamp(8px, 1vh, 10px);
   background-color: rgba(255, 107, 107, 0.1);
-  border-radius: 8px;
+  border-radius: clamp(6px, 0.8vw, 8px);
   border: 1px solid #ff6b6b;
 }
 
 .submitButton {
-  padding: 15px;
+  padding: clamp(12px, 1.5vh, 15px);
   background-color: #82ae46;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: clamp(6px, 0.8vw, 8px);
+  font-size: clamp(13px, 1.8vw, 16px);
   font-weight: bold;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: clamp(8px, 1vh, 10px);
   transition: background-color 0.2s;
 }
 
-.submitButton:hover:not(:disabled) {
-  background-color: #6d9139;
+@media (hover: hover) {
+  .submitButton:hover:not(:disabled) {
+    background-color: #6d9139;
+  }
 }
 
 .submitButton:disabled {
   background-color: #a0a0a0;
   cursor: not-allowed;
   opacity: 0.6;
-}
-
-/* レスポンシブデザイン - タブレット */
-@media (max-width: 1024px) {
-  .title {
-    font-size: 1.5em;
-  }
-
-  .pageTitle {
-    font-size: 1.8em;
-  }
-
-  .formContainer {
-    padding: 35px;
-  }
-}
-
-/* レスポンシブデザイン - スマートフォン */
-@media (max-width: 768px) {
-  .title {
-    font-size: 1.2em;
-  }
-
-  .header {
-    height: 60px;
-  }
-
-  .content {
-    margin-top: 60px;
-  }
-
-  .pageTitle {
-    font-size: 1.5em;
-    margin-bottom: 25px;
-  }
-
-  .formContainer {
-    padding: 30px 20px;
-  }
-
-  .errorMessage {
-    padding: 30px 20px;
-  }
-
-  .errorMessage h2 {
-    font-size: 20px;
-  }
-}
-
-/* レスポンシブデザイン - 小型スマートフォン */
-@media (max-width: 480px) {
-  .title {
-    font-size: 1em;
-  }
-
-  .header {
-    height: 50px;
-  }
-
-  .content {
-    margin-top: 50px;
-  }
-
-  .pageTitle {
-    font-size: 1.3em;
-    margin-bottom: 20px;
-  }
-
-  .formContainer {
-    padding: 25px 15px;
-  }
-
-  .label {
-    font-size: 14px;
-  }
-
-  .input {
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .submitButton {
-    font-size: 15px;
-    padding: 12px;
-  }
-
-  .errorMessage {
-    padding: 25px 15px;
-  }
-
-  .errorMessage h2 {
-    font-size: 18px;
-  }
-
-  .homeButton {
-    font-size: 14px;
-    padding: 12px 24px;
-  }
 }

@@ -76,12 +76,18 @@ export const MapContent = () => {
       const data = snapshot.docs.map((doc) => {
         const d = doc.data();
         return {
-        id: doc.id,  
+        id: doc.id,
         ...d,
         createdAt: d.createdAt?.toDate ? d.createdAt.toDate() : new Date(d.createdAt)
         } as RecordData;
       });
-      setRecords(data);
+
+      // 重複を除去（同じIDのレコードが複数ある場合は最初の1つだけ残す）
+      const uniqueData = data.filter((record, index, self) =>
+        index === self.findIndex((r) => r.id === record.id)
+      );
+
+      setRecords(uniqueData);
     });
 
     return () => unsubscribe();
@@ -267,9 +273,6 @@ export const MapContent = () => {
 
       console.log(newRecord);
 
-      // Firestoreに保存
-      await saveRecordToFirestore(newRecord);
-      
       // モーダルを閉じて、フォームをリセット
       setShowRecordModal(false);
       setSelectedImage(null);
@@ -552,7 +555,7 @@ export const MapContent = () => {
           {/* 記録された場所の肉球ピン */}
           {records.map((record) => (
             <AdvancedMarker
-              key={`${record.id}-${record.location.lat}-${record.location.lng}`}
+              key={record.id}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
               onMouseEnter={(e) => handleRecordMarkerHover(record, e as { domEvent?: Event })}
