@@ -515,23 +515,7 @@ export const MapContent = () => {
     glyphColor: '#82ae46',
   };
 
-  // 肉球アイコンコンポーネント
-  // const PawIcon = () => (
-  //   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="40" height="40">
-  //     <ellipse cx="256" cy="350" rx="80" ry="60" fill="#d9cf8d"/>
-  //     <ellipse cx="180" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
-  //     <ellipse cx="256" cy="160" rx="40" ry="50" fill="#d9cf8d"/>
-  //     <ellipse cx="332" cy="200" rx="40" ry="50" fill="#d9cf8d"/>
-  //     <ellipse cx="380" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
-  //     <ellipse cx="132" cy="280" rx="35" ry="45" fill="#d9cf8d"/>
-  //     <ellipse cx="256" cy="355" rx="70" ry="50" fill="#c7bc73" opacity="0.7"/>
-  //     <ellipse cx="180" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
-  //     <ellipse cx="256" cy="165" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
-  //     <ellipse cx="332" cy="205" rx="30" ry="40" fill="#c7bc73" opacity="0.7"/>
-  //     <ellipse cx="380" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
-  //     <ellipse cx="132" cy="285" rx="25" ry="35" fill="#c7bc73" opacity="0.7"/>
-  //   </svg>
-  // ); 
+  
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}>

@@ -2,7 +2,7 @@
   position: absolute;
   bottom: clamp(67px, 10vh, 90px);
   right: clamp(12px, 2vw, 20px);
-  width: clamp(45px, 6vw, 60px);
+  width: clamp(45px, 6vh, 60px);
   height: clamp(45px, 6vh, 60px);
   background-color: #d9cf8d;
   border: none;
@@ -25,7 +25,7 @@
   position: absolute;
   bottom: clamp(12px, 2vh, 20px);
   right: clamp(12px, 2vw, 20px);
-  width: clamp(45px, 6vw, 60px);
+  width: clamp(45px, 6vh, 60px);
   height: clamp(45px, 6vh, 60px);
   background-color: #d9cf8d;
   border: none;

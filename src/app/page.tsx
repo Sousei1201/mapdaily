@@ -10,7 +10,7 @@ import Link from "next/link";
 export default function Home() {
   const router = useRouter();
   const [showHowToUse, setShowHowToUse] = useState(false);
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut} = useAuth();
 
   useEffect(() => {
     if (!loading && !user) {
