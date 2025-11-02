@@ -148,11 +148,7 @@
   color: #82ae46;
 }
 
-.input:focus {
-  outline: none;
-  border-color: #6d9139;
-  background-color: rgba(242, 242, 176, 0.7);
-}
+
 
 .input:disabled {
   background-color: rgba(242, 242, 176, 0.3);
