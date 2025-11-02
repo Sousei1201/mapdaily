@@ -141,18 +141,17 @@
 
 .input {
   padding: clamp(9px, 1.2vh, 12px);
-  border: 2px solid #82ae46;
   border-radius: clamp(6px, 0.8vw, 8px);
   font-size: clamp(13px, 1.8vw, 16px);
-  background-color: rgba(242, 242, 176, 0.5);
+  background-color: #ffffff;
   color: #82ae46;
 }
 
-.input:focus {
+/* .input:focus {
   outline: none;
   border-color: #6d9139;
   background-color: rgba(242, 242, 176, 0.7);
-}
+} */
 
 .input:disabled {
   background-color: rgba(242, 242, 176, 0.3);
