@@ -51,9 +51,6 @@
   min-height: calc(100vh - clamp(50px, 7vh, 70px));
   padding: 0;
   background-color: #f2f2b0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-top: clamp(50px, 7vh, 70px);
 }
 
