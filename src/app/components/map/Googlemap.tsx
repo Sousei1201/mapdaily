@@ -638,7 +638,7 @@ export const MapContent = () => {
       {showConfirmDialog && (
         <div className={styles.dialogOverlay}>
           <div className={styles.dialogContent}>
-            <p className={styles.dialogMessage}>記録をやめますか？</p>
+            <p className={styles.dialogMessage}>きろくをやめますか？</p>
             <div className={styles.dialogButtons}>
               <button onClick={handleConfirmCancel} className={styles.dialogYes}>
                 はい
@@ -806,7 +806,7 @@ export const MapContent = () => {
       {showConfirmCancelEdit && (
         <div className={styles.confirmOverlay}>
           <div className={styles.confirmDialog}>
-            <p className={styles.confirmMessage}>記録の編集をやめますか？</p>
+            <p className={styles.confirmMessage}>きろくの編集をやめますか？</p>
             <div className={styles.confirmButtons}>
               <button onClick={handleCancelEdit} className={styles.confirmYes}>
                 はい
@@ -823,7 +823,7 @@ export const MapContent = () => {
       {showConfirmDeleteRecord && (
         <div className={styles.confirmOverlay}>
           <div className={styles.confirmDialog}>
-            <p className={styles.confirmMessage}>この記録を削除しますか？</p>
+            <p className={styles.confirmMessage}>このきろくを削除しますか？</p>
             <div className={styles.confirmButtons}>
               <button onClick={handleDeleteRecord} className={styles.confirmYes}>
                 はい

@@ -189,8 +189,8 @@
 .saveButton {
   width: 100%;
   padding: clamp(12px, 1.5vh, 15px);
-  background-color: #d9cf8d;
-  color: #82ae46;
+  background-color: #82ae46;
+  color: #ffffff;
   border: none;
   border-radius: clamp(6px, 0.8vw, 8px);
   font-size: clamp(14px, 1.8vw, 16px);
@@ -245,7 +245,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -256,15 +256,17 @@
   background-color: #d9cf8d;
   padding: clamp(20px, 3vh, 30px);
   border-radius: clamp(12px, 1.5vw, 15px);
-  text-align: center;
+  max-width: 400px;
+  width: clamp(280px, 90vw, 400px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  min-width: clamp(250px, 80vw, 300px);
 }
 
 .dialogMessage {
-  margin-bottom: clamp(15px, 2vh, 20px);
+  color: #82ae46;
   font-size: clamp(16px, 2vw, 18px);
-  color: #333;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: clamp(20px, 2.5vh, 25px);
 }
 
 .dialogButtons {
@@ -274,33 +276,35 @@
 }
 
 .dialogYes, .dialogNo {
-  padding: clamp(8px, 1vh, 10px) clamp(16px, 2vw, 20px);
+  padding: clamp(10px, 1.2vh, 12px) clamp(24px, 3vw, 30px);
   border: none;
   border-radius: clamp(6px, 0.8vw, 8px);
   font-size: clamp(14px, 1.8vw, 16px);
+  font-weight: bold;
   cursor: pointer;
-  min-width: clamp(70px, 10vw, 80px);
+  transition: background-color 0.2s;
+  min-width: clamp(80px, 10vw, 100px);
 }
 
 .dialogYes {
-  background-color: #c03939;
+  background-color: #82ae46;
   color: white;
 }
 
 @media (hover: hover) {
   .dialogYes:hover {
-    background-color: #ff2222;
+    background-color: #6d9139;
   }
 }
 
 .dialogNo {
-  background-color: #468fae;
+  background-color: #999;
   color: white;
 }
 
 @media (hover: hover) {
   .dialogNo:hover {
-    background-color: #26b1ed;
+    background-color: #777;
   }
 }
 
@@ -601,14 +605,19 @@
 
 .detailImageSection {
   width: 100%;
+  max-height: 70vh;
   margin-bottom: clamp(15px, 2vh, 20px);
   border-radius: clamp(8px, 1vw, 10px);
   overflow: hidden;
   background-color: rgba(130, 174, 70, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .detailSelectedImage {
   width: 100%;
+  max-height: 70vh;
   height: auto;
   display: block;
   object-fit: contain;

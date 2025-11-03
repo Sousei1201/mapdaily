@@ -328,7 +328,7 @@ export default function RecordsPage() {
 
             {/* 画像表示・編集 */}
             {isEditMode ? (
-              <div className={styles.imageSection}>
+              <div className={`${styles.imageSection} ${styles.editMode}`}>
                 <label htmlFor="record-edit-image-upload" className={styles.imageUploadLabel}>
                   {editImage ? (
                     <img src={editImage} alt="選択された画像" className={styles.selectedImage} />
@@ -361,13 +361,13 @@ export default function RecordsPage() {
 
             {/* 住所表示 */}
             <div className={styles.addressSection}>
-              <label className={styles.fieldLabel}>場所</label>
+              <label className={`${styles.fieldLabel} ${isEditMode ? styles.editMode : ''}`}>場所</label>
               <div className={styles.addressDisplay}>{selectedRecord.address}</div>
             </div>
 
             {/* 日時表示 */}
             <div className={styles.datetimeSection}>
-              <label className={styles.fieldLabel}>日時</label>
+              <label className={`${styles.fieldLabel} ${isEditMode ? styles.editMode : ''}`}>日時</label>
               <div className={styles.datetimeDisplay}>
                 {formatDateTime(selectedRecord.timestamp)}
               </div>
@@ -375,7 +375,7 @@ export default function RecordsPage() {
 
             {/* コメント表示・編集 */}
             <div className={styles.commentSection}>
-              <label className={styles.fieldLabel}>コメント</label>
+              <label className={`${styles.fieldLabel} ${isEditMode ? styles.editMode : ''}`}>コメント</label>
               {isEditMode ? (
                 <textarea
                   value={editComment}
@@ -423,7 +423,7 @@ export default function RecordsPage() {
       {showConfirmCancel && (
         <div className={styles.confirmOverlay}>
           <div className={styles.confirmDialog}>
-            <p className={styles.confirmMessage}>記録の編集をやめますか？</p>
+            <p className={styles.confirmMessage}>きろくの編集をやめますか？</p>
             <div className={styles.confirmButtons}>
               <button onClick={handleCancelEdit} className={styles.confirmYes}>
                 はい
@@ -440,7 +440,7 @@ export default function RecordsPage() {
       {showConfirmDelete && (
         <div className={styles.confirmOverlay}>
           <div className={styles.confirmDialog}>
-            <p className={styles.confirmMessage}>この記録を削除しますか？</p>
+            <p className={styles.confirmMessage}>このきろくを削除しますか？</p>
             <div className={styles.confirmButtons}>
               <button onClick={handleDeleteRecord} className={styles.confirmYes}>
                 はい
