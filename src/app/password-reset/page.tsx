@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import styles from './page.module.css';
@@ -95,8 +96,15 @@ function ResetPasswordContent() {
       <div className={styles.page}>
         <header className={styles.header}>
           <div className={styles.headertext}>
-            <Link href="/" className={styles.title}>
-              ふらり旅のきろく
+            <Link href="/" className={styles.titleLink}>
+              <Image
+                src="/ふらり旅のきろく.svg"
+                alt="ふらり旅のきろく"
+                width={250}
+                height={70}
+                className={styles.logo}
+                priority
+              />
             </Link>
           </div>
         </header>
@@ -120,8 +128,13 @@ function ResetPasswordContent() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.headertext}>
-          <Link href="/" className={styles.title}>
-            ふらり旅のきろく
+          <Link href="/" className={styles.titleLink}>
+            <Image
+              src="/ふらり旅のきろく.svg"
+              alt="ふらり旅のきろく"
+              className={styles.logo}
+              priority
+            />
           </Link>
         </div>
       </header>

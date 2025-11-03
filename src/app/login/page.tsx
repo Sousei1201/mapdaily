@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import styles from "./page.module.css";
 import { useAuth } from "@/app/hooks/useAuth";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -97,8 +98,15 @@ export default function LoginPage() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.headertext}>
-          <Link href="/" className={styles.title}>
-            ふらり旅のきろく
+          <Link href="/" className={styles.titleLink}>
+            <Image
+              src="/ふらり旅のきろく.svg"
+              alt="ふらり旅のきろく"
+              width = {250}
+              height = {70}
+              className={styles.logo}
+              priority
+            />
           </Link>
         </div>
       </header>

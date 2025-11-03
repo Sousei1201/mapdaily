@@ -441,7 +441,7 @@
   height: clamp(32px, 4vh, 40px);
   background-color: transparent;
   border: none;
-  color: #ffffff;
+  color: #82ae46;
   font-size: clamp(28px, 4vw, 36px);
   font-weight: bold;
   cursor: pointer;
@@ -454,7 +454,7 @@
 
 @media (hover: hover) {
   .detailCloseButton:hover {
-    color: #ff4444;
+    background-color: rgba(130, 174, 70, 0.1);
   }
 }
 

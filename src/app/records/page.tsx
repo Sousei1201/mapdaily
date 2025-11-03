@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { useAuth } from '../hooks/useAuth';
 import { db, storage } from '../lib/firebase';
@@ -228,8 +229,15 @@ export default function RecordsPage() {
       <div className={styles.page}>
         <header className={styles.header}>
           <div className={styles.headertext}>
-            <Link href="/" className={styles.title}>
-              ふらり旅のきろく
+            <Link href="/" className={styles.titleLink}>
+              <Image
+                src="/ふらり旅のきろく.svg"
+                alt="ふらり旅のきろく"
+                width ={250}
+                height ={70}
+                className={styles.logo}
+                priority
+              />
             </Link>
           </div>
         </header>
@@ -254,8 +262,15 @@ export default function RecordsPage() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.headertext}>
-          <Link href="/" className={styles.title}>
-            ふらり旅のきろく
+          <Link href="/" className={styles.titleLink}>
+            <Image
+              src="/ふらり旅のきろく.svg"
+              alt="ふらり旅のきろく"
+              width={200}
+              height={50}
+              className={styles.logo}
+              priority
+            />
           </Link>
           <nav className={styles.nav}>
             <Link href="/">マップ</Link>

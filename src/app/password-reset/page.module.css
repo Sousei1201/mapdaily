@@ -38,6 +38,17 @@
   }
 }
 
+.titleLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  width: clamp(120px, 20vw, 250px);
+  height: auto;
+}
+
 .content {
   width: 100%;
   min-height: calc(100vh - clamp(50px, 7vh, 70px));

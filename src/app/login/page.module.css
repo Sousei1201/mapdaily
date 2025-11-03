@@ -38,6 +38,17 @@
   }
 }
 
+.titleLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  width: clamp(120px, 20vw, 250px);
+  height: auto;
+}
+
 .formtitle {
   font-size: clamp(1.1em, 2vw, 1.5em);
   font-weight: bold;

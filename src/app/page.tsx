@@ -2,6 +2,7 @@
 "use client";
 import React, { useState, useEffect }  from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import styles from "./page.module.css";
 import {MapContent} from "./components/map/Googlemap";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -49,7 +50,16 @@ export default function Home() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.headertext}>
-          <div className={styles.title}>ふらり旅のきろく</div>
+          <div className={styles.titleLink}>
+            <Image
+              src="/ふらり旅のきろく.svg"
+              alt="ふらり旅のきろく"
+              width = {250}
+              height = {70}
+              className={styles.logo}
+              priority
+            />
+          </div>
           <nav className={styles.nav}>
             <a onClick={handleHowToUseClick}>つかいかた</a>
             <Link href="./records">きろく一覧</Link>
@@ -73,7 +83,7 @@ export default function Home() {
                   ×
                 </button>
                 <div className={styles.modalTitle}>つかいかた</div>
-                <p>右下の＋ボタンを押すと記録できます。きろく一覧で今までの記録を一覧で見ることができます。</p>
+                <p>右下の＋ボタンを押すときろくできます。きろく一覧で今までの記録を一覧で見ることができます。</p>
               </div>
             </div>
           )}
