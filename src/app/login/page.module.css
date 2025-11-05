@@ -32,11 +32,7 @@
   text-align: center;
 }
 
-@media (hover: hover) {
-  .title:hover {
-    color: #6d9139;
-  }
-}
+
 
 .titleLink {
   display: flex;
