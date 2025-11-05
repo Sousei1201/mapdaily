@@ -189,6 +189,9 @@
   font-size: clamp(13px, 1.6vw, 14px);
   font-family: inherit;
   box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  color-scheme: light;
 }
 
 .commentInput:focus {
