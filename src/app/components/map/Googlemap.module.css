@@ -343,6 +343,8 @@
   display:  flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto;
+  z-index: 1;
 }
 
 .pawIconContainer {
@@ -403,11 +405,10 @@
 }
 
 .hoverPopupComment {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #f2f2b0;
   padding: clamp(6px, 0.8vw, 8px);
   border-radius: clamp(5px, 0.6vw, 6px);
-  color: #333;
-  margin-bottom: clamp(5px, 0.6vh, 6px);
+  color: #82ae46;
   font-size: clamp(12px, 1.5vw, 13px);
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -416,14 +417,15 @@
 }
 
 .hoverPopupAddress {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #f2f2b0;
   padding: clamp(6px, 0.8vw, 8px);
   border-radius: clamp(5px, 0.6vw, 6px);
-  color: #666;
+  color: #82ae46;
   font-size: clamp(11px, 1.4vw, 12px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-bottom: clamp(5px, 0.6vh, 6px);
 }
 
 .pawMarkerWrapper {

@@ -25,18 +25,7 @@ interface RecordData {
   createdAt: Date;
 }
 
-      // const recordData = {
-      //   userId : user.uid,
-      //   location: {
-      //     lat: center.lat,
-      //     lng: center.lng
-      //   },
-      //   address: currentAddress,
-      //   imageURL: imageURL,
-      //   comment: comment,
-      //   timestamp: new Date().toISOString(),
-      //   createdAt: new Date()
-      // };
+ 
 
 export const MapContent = () => {
   const [center, setCenter] = useState({ lat: 35.656, lng: 139.737 });
@@ -320,14 +309,14 @@ export const MapContent = () => {
   };
 
   // 肉球ピンホバーの処理
-  const handleRecordMarkerHover = (record : RecordData, event: { domEvent?: Event }) => {
+  const handleRecordMarkerHover = (record : RecordData, event: Event) => {
     // タッチデバイス（スマホ・タブレット）ではホバー処理をスキップ
     if (isTouchDevice()) {
       return;
     }
 
     // ピンの中央座標を取得
-    const target = event.domEvent?.target as HTMLElement;
+    const target = event.target as HTMLElement;
     if (!target) return;
 
     const rect = target.getBoundingClientRect();
@@ -542,11 +531,14 @@ export const MapContent = () => {
               key={record.id}
               position={record.location}
               onClick={() => handleRecordMarkerClick(record)}
-              onMouseEnter={(e) => handleRecordMarkerHover(record, e as { domEvent?: Event })}
+              onMouseEnter={(e) => handleRecordMarkerHover(record, e)}
               onMouseLeave={handleRecordMarkerLeave}
 
             >
-              <div className={styles.pawMarkerWrapper}>
+              <div
+                className={styles.pawMarkerWrapper}
+                onClick={() => handleRecordMarkerClick(record)}
+              >
                <Pin {...PawPinOptions}>
                 <div className={styles.pawIconContainer}>
                   <PawIcon/>
@@ -683,17 +675,17 @@ export const MapContent = () => {
             {formatDateTime(selectedRecord.timestamp)}
           </div>
 
+          {/* 住所表示 */}
+          <div className={styles.hoverPopupAddress}>
+            {selectedRecord.address}
+          </div>
+
           {/* コメント表示 */}
           {selectedRecord.comment && (
             <div className={styles.hoverPopupComment}>
               {selectedRecord.comment}
             </div>
           )}
-
-          {/* 住所表示 */}
-          <div className={styles.hoverPopupAddress}>
-            {selectedRecord.address}
-          </div>
         </div>
       )}
 
