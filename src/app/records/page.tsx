@@ -286,7 +286,7 @@ export default function RecordsPage() {
             <h1 className={styles.pageTitle}>きろく一覧</h1>
             <div className={styles.recordsList}>
               {records.length === 0 ? (
-                <p className={styles.emptyMessage}>まだ記録がありません</p>
+                <p className={styles.emptyMessage}>まだきろくがありません</p>
               ) : (
                 records.map((record) => (
                   <div

@@ -167,6 +167,7 @@
 }
 
 .emptyMessage {
+  grid-column: 1 / -1;
   text-align: center;
   color: #82ae46;
   font-size: clamp(16px, 2vw, 18px);
@@ -174,6 +175,9 @@
   padding: clamp(30px, 4vh, 40px) clamp(20px, 3vw, 40px);
   background-color: rgba(217, 205, 163, 0.5);
   border-radius: clamp(10px, 1.5vw, 15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .recordCard {
