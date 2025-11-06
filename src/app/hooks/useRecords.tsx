@@ -8,14 +8,15 @@ import {
   orderBy,
   getDocs
 } from 'firebase/firestore';
-import { 
-  ref, 
-  uploadBytes, 
-  getDownloadURL 
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL
 } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 import { useAuth } from './useAuth';
 
+// 旅行記録データの型定義
 export interface TravelRecord {
   id?: string;
   userId: string;
@@ -29,6 +30,7 @@ export interface TravelRecord {
   timestamp: string;
 }
 
+// 旅行記録を管理するカスタムフック
 export const useRecords = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -36,14 +38,14 @@ export const useRecords = () => {
   // 画像をFirebase Storageにアップロード
   const uploadImage = async (file: File): Promise<string> => {
     if (!user) throw new Error('ユーザーがログインしていません');
-    
+
     const timestamp = Date.now();
     const fileName = `${user.uid}/${timestamp}_${file.name}`;
     const storageRef = ref(storage, `travel-images/${fileName}`);
-    
+
     const snapshot = await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
-    
+
     return downloadURL;
   };
 
@@ -55,12 +57,12 @@ export const useRecords = () => {
     comment: string
   ): Promise<void> => {
     if (!user) throw new Error('ユーザーがログインしていません');
-    
+
     setLoading(true);
     try {
       // 画像をアップロード
       const imageUrl = await uploadImage(image);
-      
+
       // Firestoreに記録を保存
       const recordData: Omit<TravelRecord, 'id'> = {
         userId: user.uid,
@@ -70,7 +72,7 @@ export const useRecords = () => {
         comment,
         timestamp: new Date().toISOString()
       };
-      
+
       await addDoc(collection(db, 'records'), recordData);
     } catch (error) {
       console.error('記録の保存に失敗しました:', error);
@@ -83,7 +85,7 @@ export const useRecords = () => {
   // ユーザーの記録を取得
   const fetchUserRecords = async (): Promise<TravelRecord[]> => {
     if (!user) return [];
-    
+
     setLoading(true);
     try {
       const q = query(
@@ -91,17 +93,17 @@ export const useRecords = () => {
         where('userId', '==', user.uid),
         orderBy('timestamp', 'desc')
       );
-      
+
       const querySnapshot = await getDocs(q);
       const records: TravelRecord[] = [];
-      
+
       querySnapshot.forEach((doc) => {
         records.push({
           id: doc.id,
           ...doc.data()
         } as TravelRecord);
       });
-      
+
       return records;
     } catch (error) {
       console.error('記録の取得に失敗しました:', error);

@@ -8,6 +8,7 @@ import { db, storage } from '../lib/firebase';
 import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+// 記録データの型定義
 interface RecordData {
   id: string;
   userId: string;
@@ -22,6 +23,7 @@ interface RecordData {
   createdAt: Date;
 }
 
+// 記録一覧ページコンポーネント
 export default function RecordsPage() {
   const { user, loading, signOut } = useAuth();
   const [records, setRecords] = useState<RecordData[]>([]);
@@ -35,6 +37,7 @@ export default function RecordsPage() {
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
+  // サインアウト処理
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -77,13 +80,13 @@ export default function RecordsPage() {
     return () => unsubscribe();
   }, [user]);
 
-  // 日時フォーマット
+  // 日時を日本語形式にフォーマット
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString('ja-JP');
   };
 
-  // 記録カードクリック時の処理
+  // 記録カードをクリックして詳細を表示
   const handleRecordClick = (record: RecordData) => {
     setSelectedRecord(record);
     setShowDetail(true);

@@ -1,14 +1,15 @@
 'use client';
 import { useState, useEffect, createContext, useContext } from 'react';
-import { 
-  User, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+import {
+  User,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
-  onAuthStateChanged 
+  onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
+// 認証コンテキストの型定義
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -17,6 +18,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
+// 認証コンテキストの作成
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
@@ -25,12 +27,15 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+// 認証コンテキストを使用するカスタムフック
 export const useAuth = () => useContext(AuthContext);
 
+// 認証プロバイダーコンポーネント
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 認証状態の監視
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -40,15 +45,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return unsubscribe;
   }, []);
 
+  // サインイン処理
   const signIn = async (email: string, password: string) => {
     try {
-      console.log(email, password);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       throw error;
     }
   };
 
+  // サインアップ処理
   const signUp = async (email: string, password: string) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
@@ -57,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // サインアウト処理
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
@@ -72,7 +79,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signOut,
   };
-  console.log(value);
 
   return (
     <AuthContext.Provider value={value}>

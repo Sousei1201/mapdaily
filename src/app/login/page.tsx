@@ -8,6 +8,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/app/lib/firebase";
 import Link from "next/link";
 
+// ログインページコンポーネント
 export default function LoginPage() {
   const [showIntroducemodal, setShowIntroducemodal] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { signIn, signUp } = useAuth();
 
+  // ログイン・サインアップフォームの送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -59,6 +61,7 @@ export default function LoginPage() {
     }
   };
 
+  // パスワード再設定メール送信処理
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -84,6 +87,7 @@ export default function LoginPage() {
     }
   };
 
+  // フォームのリセット処理
   const resetForm = () => {
     setEmail('');
     setPassword('');

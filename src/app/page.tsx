@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect }  from "react";
 import { useRouter } from "next/navigation";
@@ -8,17 +7,20 @@ import {MapContent} from "./components/map/Googlemap";
 import { useAuth } from "@/app/hooks/useAuth";
 import Link from "next/link";
 
+// ホームページコンポーネント（地図表示とナビゲーション）
 export default function Home() {
   const router = useRouter();
   const [showHowToUse, setShowHowToUse] = useState(false);
   const { user, loading, signOut} = useAuth();
 
+  // 未ログインユーザーをログインページにリダイレクト
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
 
+  // サインアウト処理
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -30,10 +32,12 @@ export default function Home() {
     }
   };
 
+  // 使い方モーダルを表示
   const handleHowToUseClick = () => {
     setShowHowToUse(true);
   };
 
+  // ローディング中の表示
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -42,6 +46,7 @@ export default function Home() {
     );
   }
 
+  // 未ログイン時は何も表示しない
   if (!user) {
     return null;
   }
@@ -73,6 +78,7 @@ export default function Home() {
         <div className={styles.content}>
           <MapContent/>
 
+          {/* 使い方モーダル */}
           {showHowToUse && (
             <div className={styles.modalOverlay}>
               <div className={styles.modalContent}>

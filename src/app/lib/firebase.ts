@@ -3,8 +3,8 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
+// Firebaseプロジェクトの設定
 const firebaseConfig = {
-  // ここにFirebaseプロジェクトの設定を入力してください
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
@@ -13,9 +13,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
+// Firebaseアプリの初期化（既に初期化済みの場合は既存のインスタンスを取得）
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+
+// Firebase Authentication のインスタンス
 export const auth = getAuth(app);
+
+// Firestore のインスタンス
 export const db = getFirestore(app);
+
+// Firebase Storage のインスタンス
 export const storage = getStorage(app);
 
 // 開発環境でエミュレータを使用する場合（オプション）

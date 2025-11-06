@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, onSnapshot, query, where, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import PawIcon from './paw-solid.svg';
 
-
+// 記録データの型定義
 interface RecordData {
   id: string;
   userId: string;
@@ -25,8 +25,7 @@ interface RecordData {
   createdAt: Date;
 }
 
- 
-
+// Google Mapコンテンツコンポーネント
 export const MapContent = () => {
   const [center, setCenter] = useState({ lat: 35.656, lng: 139.737 });
   const [isLoading, setIsLoading] = useState(true);
@@ -52,8 +51,8 @@ export const MapContent = () => {
   const [showConfirmDeleteRecord, setShowConfirmDeleteRecord] = useState(false);
   const { user, loading} = useAuth(); // 追加: ユーザー情報取得
   
-  
- // --- Firestore リアルタイム同期 ---
+
+ // Firestoreからユーザーの記録をリアルタイム同期
  useEffect(() => {
     if (!user) return;
     const q = query(
@@ -82,7 +81,7 @@ export const MapContent = () => {
     return () => unsubscribe();
   }, [user]);
 
-// --- 現在地の取得 ---
+// 現在地を取得して地図の中心を設定
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -106,6 +105,7 @@ export const MapContent = () => {
     }
   }, []);
 
+  // 現在地ボタンをクリックして地図を現在地に移動
   const goToCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -128,7 +128,7 @@ export const MapContent = () => {
   };
 
 
-  // 住所を取得する関数
+  // 緯度経度から住所を取得（逆ジオコーディング）
   const getCurrentAddress = async (lat: number, lng: number): Promise<string> => {
     try {
       const geocoder = new google.maps.Geocoder();
@@ -148,7 +148,7 @@ export const MapContent = () => {
     }
   };
 
-  // 記録ボタンを押したときの処理
+  // 記録ボタン（+ボタン）をクリックしてモーダルを表示
   const handleRecordClick = async () => {
     setShowRecordModal(true);
     // 現在地の住所を取得
@@ -156,7 +156,7 @@ export const MapContent = () => {
     setCurrentAddress(address);
   };
 
-  // 画像選択の処理 (修正: File オブジェクトも保存)
+  // 画像ファイルを選択してプレビュー表示
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -198,7 +198,7 @@ export const MapContent = () => {
 
   
 
-  // 記録を保存する処理 (修正: 実際のアップロード処理を実装)
+  // 記録をFirestoreとStorageに保存
   const handleSaveRecord = async () => {
     if (!user) {
       alert('ログインが必要です');
@@ -287,12 +287,12 @@ export const MapContent = () => {
     }
   };
 
-  // キャンセル確認の処理
+  // 記録作成をキャンセルする際の確認ダイアログを表示
   const handleCancelClick = () => {
     setShowConfirmDialog(true);
   };
 
- // 肉球ピンクリック時の処理（詳細表示）
+ // 肉球ピンをクリックして記録の詳細を表示
   const handleRecordMarkerClick = (record: RecordData) => {
     // ホバーポップアップを閉じる
     setShowPopup(false);
@@ -303,12 +303,12 @@ export const MapContent = () => {
     setShowRecordDetail(true);
   };
 
-  // タッチデバイスかどうかを判定
+  // デバイスがタッチデバイス（スマホ・タブレット）かどうかを判定
   const isTouchDevice = () => {
     return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   };
 
-  // 肉球ピンホバーの処理
+  // 肉球ピンにマウスホバーしてプレビューポップアップを表示
   const handleRecordMarkerHover = (record : RecordData, event: Event) => {
     // タッチデバイス（スマホ・タブレット）ではホバー処理をスキップ
     if (isTouchDevice()) {
@@ -453,7 +453,7 @@ export const MapContent = () => {
     }
   };
 
-    // --- 日時フォーマット ---
+  // 日時を日本語形式にフォーマット
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleString('ja-JP');
@@ -471,7 +471,7 @@ export const MapContent = () => {
     setShowConfirmDialog(false);
   };
 
-  // 現在の日時を取得
+  // 現在の日時を日本語形式で取得
   const getCurrentDateTime = () => {
     const now = new Date();
     return now.toLocaleString('ja-JP', {
@@ -491,13 +491,14 @@ export const MapContent = () => {
     );
   }
 
-  //マーカーピンのオプション
+  // 肉球マーカーピンのスタイルオプション
   const PawPinOptions = {
     background: '#82ae46',
     borderColor: '#6d9139',
     glyphColor: '#82ae46',
   };
 
+  // 現在地マーカーピンのスタイルオプション
    const PinOptions = {
     background: '#ffec47',
     borderColor: '#6d9139',

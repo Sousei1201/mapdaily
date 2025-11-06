@@ -7,6 +7,7 @@ import { auth } from '../lib/firebase';
 import styles from './page.module.css';
 import Link from 'next/link';
 
+// パスワード再設定のメインコンテンツコンポーネント
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,6 +18,7 @@ function ResetPasswordContent() {
   const [verifying, setVerifying] = useState(true);
   const [oobCode, setOobCode] = useState<string | null>(null);
 
+  // URLパラメータから再設定コードを取得・検証
   useEffect(() => {
     const code = searchParams.get('oobCode');
     if (!code) {
@@ -38,11 +40,12 @@ function ResetPasswordContent() {
       });
   }, [searchParams]);
 
+  // パスワード再設定フォームの送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // パスワードの検証
+    // パスワードのバリデーション
     if (newPassword.length < 6) {
       setError('パスワードは6文字以上で入力してください');
       return;
@@ -189,6 +192,7 @@ function ResetPasswordContent() {
   );
 }
 
+// パスワード再設定ページコンポーネント（Suspenseでラップ）
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
